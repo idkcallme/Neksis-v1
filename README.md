@@ -21,7 +21,7 @@ A modern, statically-typed programming language designed for safety, performance
 
 ### Build from Source (Recommended)
 ```bash
-git clone https://github.com/yourusername/neksis.git
+git clone https://github.com/idkcallme/Neksis.git
 cd neksis
 cargo build --release
 cargo install --path .
