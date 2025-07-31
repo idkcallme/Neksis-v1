@@ -1,4 +1,4 @@
-# Neksis Programming Language
+# Neksis 
 
 A modern, statically-typed programming language designed for safety, performance, and developer productivity. Neksis combines the best features of languages like Rust, Go, and TypeScript to create a powerful yet accessible programming experience.
 
