@@ -1,0 +1,102 @@
+// Final Comprehensive neksis Language Test
+// Testing all implemented features and modules
+
+fn main() -> Int {
+    println("🚀 Starting Final Comprehensive Test");
+    println("=====================================");
+    
+    // Test 1: Basic literals and variables
+    println("Test 1: Basic literals and variables");
+    let x = 42;
+    let y = 3.14;
+    let z = true;
+    let s = "hello";
+    println("x = " + x);
+    println("y = " + y);
+    println("z = " + z);
+    println("s = " + s);
+    
+    // Test 2: Arithmetic operations
+    println("Test 2: Arithmetic operations");
+    let sum = x + 10;
+    let product = x * 2;
+    let quotient = x / 2;
+    let remainder = x % 5;
+    println("sum = " + sum);
+    println("product = " + product);
+    println("quotient = " + quotient);
+    println("remainder = " + remainder);
+    
+    // Test 3: String operations
+    println("Test 3: String operations");
+    let greeting = s + " world";
+    let length = len(s);
+    println("greeting = " + greeting);
+    println("length = " + length);
+    
+    // Test 4: Boolean operations
+    println("Test 4: Boolean operations");
+    let result = z && true;
+    let comparison = x > 40;
+    let logical_or = false || true;
+    println("result = " + result);
+    println("comparison = " + comparison);
+    println("logical_or = " + logical_or);
+    
+    // Test 5: If expressions
+    println("Test 5: If expressions");
+    let conditional = if x > 40 {
+        "large"
+    } else {
+        "small"
+    };
+    println("conditional = " + conditional);
+    
+    // Test 6: Block expressions
+    println("Test 6: Block expressions");
+    let block_result = {
+        let temp = 100;
+        let temp2 = 50;
+        temp + temp2
+    };
+    println("block_result = " + block_result);
+    
+    // Test 7: Nested scopes
+    println("Test 7: Nested scopes");
+    {
+        let inner = "inner scope";
+        println("inner = " + inner);
+    }
+    
+    // Test 8: Function calls
+    println("Test 8: Function calls");
+    let test_result = test_function(10, 20);
+    println("test_result = " + test_result);
+    
+    // Test 9: Type conversions
+    println("Test 9: Type conversions");
+    let int_str = to_string(x);
+    let float_str = to_string(y);
+    println("int_str = " + int_str);
+    println("float_str = " + float_str);
+    
+    // Test 10: Error handling
+    println("Test 10: Error handling");
+    let safe_division = safe_divide(x, 2);
+    println("safe_division = " + safe_division);
+    
+    println("=====================================");
+    println("✅ All tests completed successfully!");
+    return 0;
+}
+
+fn test_function(a: Int, b: Int) -> Int {
+    return a + b;
+}
+
+fn safe_divide(a: Int, b: Int) -> Int {
+    if b == 0 {
+        return 0;
+    }
+    return a / b;
+} 

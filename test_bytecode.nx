@@ -1,0 +1,45 @@
+// Comprehensive bytecode interpreter test
+let x = 42;
+let y = "Hello, World!";
+let z = 3.14;
+
+// Test basic arithmetic
+let sum = x + 10;
+let product = x * 2;
+let quotient = x / 2;
+
+// Test string operations
+print(y);
+print("The value of x is: " + x);
+print("Sum: " + sum);
+print("Product: " + product);
+print("Quotient: " + quotient);
+
+// Test boolean operations
+let is_positive = x > 0;
+let is_even = x % 2 == 0;
+print("Is positive: " + is_positive);
+print("Is even: " + is_even);
+
+// Test function definition and call
+fn add(a: i32, b: i32) -> i32 {
+    return a + b;
+}
+
+let result = add(5, 3);
+print("Function result: " + result);
+
+// Test conditional logic
+if x > 40 {
+    print("x is greater than 40");
+} else {
+    print("x is not greater than 40");
+}
+
+// Test variable scope
+let outer = 100;
+{
+    let inner = 200;
+    print("Inner: " + inner);
+}
+print("Outer: " + outer); 

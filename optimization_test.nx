@@ -1,0 +1,73 @@
+// Optimization Test File for neksis Compiler
+// This file demonstrates various optimization opportunities
+
+// Function inlining candidate (small function)
+fn add(a: Int, b: Int) -> Int {
+    a + b
+}
+
+// Constant folding opportunities
+fn constant_math() -> Int {
+    let x = 5 + 3 * 2  // Should be folded to 11
+    let y = 10 / 2     // Should be folded to 5
+    x + y
+}
+
+// Dead code elimination test
+fn dead_code_test() -> Int {
+    let result = 42
+    if false {
+        result = 100  // This should be eliminated
+    }
+    result
+}
+
+// Loop optimization opportunities
+fn loop_optimization() -> Int {
+    let sum = 0
+    let i = 0
+    while i < 10 {
+        sum = sum + i
+        i = i + 1
+    }
+    sum
+}
+
+// Strength reduction opportunities
+fn strength_reduction() -> Int {
+    let x = 5
+    let y = x * 8  // Should be optimized to x << 3
+    y
+}
+
+// Common subexpression elimination
+fn cse_test() -> Int {
+    let a = 5
+    let b = 3
+    let temp = a + b
+    let result1 = temp * 2
+    let result2 = temp * 3  // temp should be reused
+    result1 + result2
+}
+
+// Tail call optimization candidate
+fn factorial(n: Int, acc: Int) -> Int {
+    if n <= 1 {
+        acc
+    } else {
+        factorial(n - 1, n * acc)  // Tail call
+    }
+}
+
+// Main function to test all optimizations
+fn main() -> Int {
+    let result1 = add(5, 3)
+    let result2 = constant_math()
+    let result3 = dead_code_test()
+    let result4 = loop_optimization()
+    let result5 = strength_reduction()
+    let result6 = cse_test()
+    let result7 = factorial(5, 1)
+    
+    result1 + result2 + result3 + result4 + result5 + result6 + result7
+} 

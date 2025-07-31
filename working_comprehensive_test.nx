@@ -1,0 +1,216 @@
+// Comprehensive neksis Language Test
+// Testing all features that work with the current parser
+
+fn test_literals() -> Int {
+    let x = 42;
+    let y = 3.14;
+    let z = true;
+    
+    if x == 42 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_arithmetic() -> Int {
+    let a = 10;
+    let b = 5;
+    
+    let sum = a + b;
+    let diff = a - b;
+    let product = a * b;
+    
+    if sum == 15 && diff == 5 && product == 50 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_variables() -> Int {
+    let mut x = 10;
+    x = 20;
+    
+    if x == 20 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_if_statements() -> Int {
+    let x = 5;
+    let y = 10;
+    
+    let result = if x < y {
+        x + y
+    } else {
+        x - y
+    };
+    
+    if result == 15 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_while_loops() -> Int {
+    let mut counter = 0;
+    let mut sum = 0;
+    
+    while counter < 5 {
+        sum += counter;
+        counter += 1;
+    }
+    
+    if sum == 10 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_function_calls() -> Int {
+    let result = add(5, 3);
+    if result == 8 {
+        return 1;
+    }
+    return 0;
+}
+
+fn add(a, b) -> Int {
+    return a + b;
+}
+
+fn test_blocks() -> Int {
+    let result = {
+        let x = 10;
+        let y = 20;
+        x + y
+    };
+    
+    if result == 30 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_comparison_operators() -> Int {
+    let x = 5;
+    let y = 10;
+    
+    let less = x < y;
+    let less_equal = x <= y;
+    let greater = x > y;
+    let greater_equal = x >= y;
+    let equal = x == y;
+    let not_equal = x != y;
+    
+    if less && less_equal && !greater && !greater_equal && !equal && not_equal {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_logical_operators() -> Int {
+    let a = true;
+    let b = false;
+    
+    let and_result = a && b;
+    let or_result = a || b;
+    let not_a = !a;
+    let not_b = !b;
+    
+    if !and_result && or_result && !not_a && not_b {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_compound_assignment() -> Int {
+    let mut x = 10;
+    x += 5;
+    x -= 2;
+    x *= 3;
+    x /= 2;
+    
+    if x == 19 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_nested_if() -> Int {
+    let x = 5;
+    let y = 10;
+    let z = 15;
+    
+    let result = if x < y {
+        if y < z {
+            x + y + z
+        } else {
+            x + y
+        }
+    } else {
+        x
+    };
+    
+    if result == 30 {
+        return 1;
+    }
+    return 0;
+}
+
+fn test_recursive_function() -> Int {
+    let result = factorial(5);
+    if result == 120 {
+        return 1;
+    }
+    return 0;
+}
+
+fn factorial(n) -> Int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+fn test_optimization_candidates() -> Int {
+    // Constant folding test
+    let constant_result = 2 + 3 * 4;
+    
+    // Dead code elimination test
+    let unused = 42;
+    let used = 100;
+    
+    // Loop optimization test
+    let mut sum = 0;
+    let mut i = 0;
+    while i < 10 {
+        sum += i;
+        i += 1;
+    }
+    
+    if constant_result == 14 && used == 100 && sum == 45 {
+        return 1;
+    }
+    return 0;
+}
+
+fn main() -> Int {
+    let mut passed = 0;
+    
+    if test_literals() == 1 { passed += 1; }
+    if test_arithmetic() == 1 { passed += 1; }
+    if test_variables() == 1 { passed += 1; }
+    if test_if_statements() == 1 { passed += 1; }
+    if test_while_loops() == 1 { passed += 1; }
+    if test_function_calls() == 1 { passed += 1; }
+    if test_blocks() == 1 { passed += 1; }
+    if test_comparison_operators() == 1 { passed += 1; }
+    if test_logical_operators() == 1 { passed += 1; }
+    if test_compound_assignment() == 1 { passed += 1; }
+    if test_nested_if() == 1 { passed += 1; }
+    if test_recursive_function() == 1 { passed += 1; }
+    if test_optimization_candidates() == 1 { passed += 1; }
+    
+    return passed;
+} 

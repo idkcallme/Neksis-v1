@@ -1,0 +1,898 @@
+================================================================================
+                           NEKSIS PROGRAMMING LANGUAGE
+                           Complete Documentation Guide
+================================================================================
+
+Table of Contents:
+1. Introduction and Overview
+2. Installation and Setup
+3. Getting Started Tutorial
+4. Language Basics
+5. Practice Projects
+6. Language Reference Manual
+7. Standard Library Reference
+8. Advanced Features
+9. Best Practices
+10. Troubleshooting
+
+================================================================================
+1. INTRODUCTION AND OVERVIEW
+================================================================================
+
+What is Neksis?
+---------------
+Neksis is a modern, statically-typed programming language designed for safety, 
+performance, and developer productivity. It combines the best features of 
+languages like Rust, Go, and TypeScript to create a powerful yet accessible 
+programming experience.
+
+Key Features:
+- Static type checking with type inference
+- Memory safety with built-in borrow checker
+- Comprehensive standard library
+- Modern development tools (formatter, linter, package manager)
+- IDE support with Language Server Protocol (LSP)
+- Interactive REPL for rapid prototyping
+- Cross-platform compilation and execution
+
+Why Choose Neksis?
+------------------
+1. Safety First: Built-in memory safety prevents common programming errors
+2. Performance: Efficient compilation and runtime performance
+3. Developer Experience: Excellent tooling and error messages
+4. Learning Friendly: Clear syntax and comprehensive documentation
+5. Production Ready: Suitable for both learning and real-world applications
+
+Use Cases:
+- Educational programming and computer science courses
+- Rapid prototyping and scripting
+- System utilities and automation
+- Web development (server-side)
+- Embedded systems programming
+- Application development
+
+================================================================================
+2. INSTALLATION AND SETUP
+================================================================================
+
+Prerequisites:
+- Rust 1.70+ (for building from source)
+- Git (for cloning the repository)
+- A modern operating system (Windows, macOS, Linux)
+
+Installation Methods:
+
+Method 1: Build from Source (Recommended)
+----------------------------------------
+1. Clone the repository:
+   git clone https://github.com/neksis-lang/neksis.git
+   cd neksis
+
+2. Build the compiler:
+   cargo build --release
+
+3. Install globally:
+   cargo install --path .
+
+4. Verify installation:
+   neksis --version
+
+Method 2: Download Pre-built Binaries
+------------------------------------
+Visit https://github.com/neksis-lang/neksis/releases
+Download the appropriate binary for your platform and add to PATH.
+
+IDE Setup:
+----------
+VS Code:
+1. Install the "Neksis Language" extension
+2. Open a .nx file
+3. Enjoy syntax highlighting and IntelliSense
+
+Other IDEs:
+- Neovim: Install neksis-lsp
+- Emacs: Install neksis-mode
+- IntelliJ IDEA: Install Neksis plugin
+
+================================================================================
+3. GETTING STARTED TUTORIAL
+================================================================================
+
+Your First Neksis Program
+-------------------------
+Let's create the classic "Hello, World!" program:
+
+1. Create a file named hello.nx:
+```nx
+fn main() -> Int {
+    println("Hello, World!");
+    return 0;
+}
+```
+
+2. Run the program:
+   neksis run hello.nx
+
+Expected output:
+Hello, World!
+
+Understanding the Code:
+- fn main() -> Int: Function declaration with return type
+- println(): Built-in function for printing with newline
+- return 0: Exit code for successful execution
+
+Interactive REPL:
+----------------
+Start the interactive REPL:
+   neksis repl
+
+Try these commands:
+>>> let x = 42
+>>> println("x = " + x)
+>>> x + 10
+>>> exit
+
+================================================================================
+4. LANGUAGE BASICS
+================================================================================
+
+Variables and Types
+------------------
+Neksis is statically typed with type inference:
+
+```nx
+// Type inference
+let x = 42;           // Int
+let y = 3.14;         // Float
+let z = true;         // Bool
+let s = "hello";      // String
+
+// Explicit type annotations
+let a: Int = 100;
+let b: Float = 2.5;
+let c: String = "explicit";
+```
+
+Basic Types:
+- Int: 64-bit integers
+- Float: 64-bit floating-point numbers
+- Bool: Boolean values (true/false)
+- String: UTF-8 encoded strings
+
+Arithmetic Operations
+--------------------
+```nx
+let a = 10;
+let b = 3;
+
+let sum = a + b;      // 13
+let diff = a - b;     // 7
+let product = a * b;  // 30
+let quotient = a / b; // 3
+let remainder = a % b; // 1
+```
+
+String Operations
+----------------
+```nx
+let greeting = "Hello";
+let name = "World";
+
+let message = greeting + " " + name;  // "Hello World"
+let length = len(message);            // 11
+let substring = substring(message, 0, 5); // "Hello"
+```
+
+Control Flow
+------------
+If expressions:
+```nx
+let x = 42;
+let result = if x > 40 {
+    "large"
+} else {
+    "small"
+};
+```
+
+Block expressions:
+```nx
+let block_result = {
+    let temp = 100;
+    let temp2 = 50;
+    temp + temp2
+};
+```
+
+Functions
+---------
+Function definition:
+```nx
+fn add(a: Int, b: Int) -> Int {
+    return a + b;
+}
+
+fn greet(name: String) -> String {
+    return "Hello, " + name;
+}
+```
+
+Function calls:
+```nx
+let result = add(10, 20);
+let message = greet("Alice");
+```
+
+Type Conversions
+----------------
+```nx
+let x = 42;
+let x_str = to_string(x);     // "42"
+let x_float = to_float(x);    // 42.0
+
+let s = "123";
+let s_int = to_int(s);        // 123
+```
+
+Error Handling
+--------------
+```nx
+fn safe_divide(a: Int, b: Int) -> Int {
+    if b == 0 {
+        return 0;  // Handle division by zero
+    }
+    return a / b;
+}
+```
+
+================================================================================
+5. PRACTICE PROJECTS
+================================================================================
+
+Project 1: Calculator
+--------------------
+Create a simple calculator that can perform basic arithmetic:
+
+```nx
+fn main() -> Int {
+    println("Simple Calculator");
+    println("Enter first number:");
+    let a = to_int(read_line());
+    
+    println("Enter second number:");
+    let b = to_int(read_line());
+    
+    println("Enter operation (+, -, *, /):");
+    let op = read_line();
+    
+    let result = calculate(a, b, op);
+    println("Result: " + result);
+    
+    return 0;
+}
+
+fn calculate(a: Int, b: Int, op: String) -> Int {
+    if op == "+" {
+        return a + b;
+    } else if op == "-" {
+        return a - b;
+    } else if op == "*" {
+        return a * b;
+    } else if op == "/" {
+        if b == 0 {
+            println("Error: Division by zero");
+            return 0;
+        }
+        return a / b;
+    } else {
+        println("Error: Invalid operation");
+        return 0;
+    }
+}
+```
+
+Project 2: Number Guessing Game
+------------------------------
+```nx
+fn main() -> Int {
+    println("Number Guessing Game");
+    println("I'm thinking of a number between 1 and 100...");
+    
+    let secret = random_number(1, 100);
+    let mut attempts = 0;
+    
+    while true {
+        attempts = attempts + 1;
+        println("Enter your guess:");
+        let guess = to_int(read_line());
+        
+        if guess == secret {
+            println("Congratulations! You guessed it in " + attempts + " attempts!");
+            break;
+        } else if guess < secret {
+            println("Too low! Try again.");
+        } else {
+            println("Too high! Try again.");
+        }
+    }
+    
+    return 0;
+}
+
+fn random_number(min: Int, max: Int) -> Int {
+    // Simplified random number generation
+    return min + (max - min) / 2;
+}
+```
+
+Project 3: Simple Text Analyzer
+------------------------------
+```nx
+fn main() -> Int {
+    println("Text Analyzer");
+    println("Enter some text:");
+    let text = read_line();
+    
+    let word_count = count_words(text);
+    let char_count = len(text);
+    let avg_word_length = char_count / word_count;
+    
+    println("Analysis:");
+    println("Characters: " + char_count);
+    println("Words: " + word_count);
+    println("Average word length: " + avg_word_length);
+    
+    return 0;
+}
+
+fn count_words(text: String) -> Int {
+    let mut count = 0;
+    let mut in_word = false;
+    
+    for i in 0..len(text) {
+        let char = substring(text, i, i + 1);
+        if char == " " {
+            in_word = false;
+        } else if !in_word {
+            count = count + 1;
+            in_word = true;
+        }
+    }
+    
+    return count;
+}
+```
+
+================================================================================
+6. LANGUAGE REFERENCE MANUAL
+================================================================================
+
+Lexical Structure
+-----------------
+Keywords:
+- fn, let, if, else, return, true, false
+- Int, Float, Bool, String, Void
+- while, for, break, continue
+
+Identifiers:
+- Start with letter or underscore
+- Contain letters, digits, underscores
+- Case sensitive
+
+Literals:
+- Integer: 42, -10, 0x1A
+- Float: 3.14, -2.5, 1e-10
+- String: "hello", 'world'
+- Boolean: true, false
+
+Operators:
+- Arithmetic: +, -, *, /, %
+- Comparison: ==, !=, <, >, <=, >=
+- Logical: &&, ||, !
+- Assignment: =
+
+Syntax
+------
+Program structure:
+```nx
+// Import statements (future feature)
+// Function and variable declarations
+fn main() -> Int {
+    // Statements
+    return 0;
+}
+```
+
+Function declaration:
+```nx
+fn function_name(param1: Type1, param2: Type2) -> ReturnType {
+    // Function body
+    return value;
+}
+```
+
+Variable declaration:
+```nx
+let variable_name: Type = value;
+let inferred_type = value;  // Type inference
+```
+
+Control structures:
+```nx
+if condition {
+    // statements
+} else {
+    // statements
+}
+
+while condition {
+    // statements
+}
+
+{
+    // block expression
+    // returns last expression value
+}
+```
+
+Type System
+-----------
+Basic types:
+- Int: 64-bit signed integer
+- Float: 64-bit floating-point
+- Bool: Boolean (true/false)
+- String: UTF-8 string
+- Void: Unit type (no value)
+
+Type inference:
+- Variables: Type inferred from initial value
+- Functions: Return type can be inferred
+- Expressions: Type determined by operands
+
+Type conversions:
+- Implicit: Int to Float
+- Explicit: to_string(), to_int(), to_float()
+
+Memory Management
+----------------
+- Automatic memory management
+- Borrow checker prevents data races
+- No manual memory allocation/deallocation
+- Garbage collection for complex data structures
+
+Error Handling
+--------------
+- Compile-time error checking
+- Runtime error handling with default values
+- Panic for unrecoverable errors
+- Assert for debugging
+
+================================================================================
+7. STANDARD LIBRARY REFERENCE
+================================================================================
+
+I/O Functions
+-------------
+print(value): Print value without newline
+println(value): Print value with newline
+read_line(): Read line from stdin
+
+```nx
+println("Hello");           // Prints with newline
+print("World");            // Prints without newline
+let input = read_line();   // Reads user input
+```
+
+String Functions
+---------------
+len(string): Get string length
+substring(string, start, end): Extract substring
+concat(string1, string2): Concatenate strings
+to_string(value): Convert to string
+to_int(string): Parse string as integer
+to_float(string): Parse string as float
+
+```nx
+let s = "Hello, World";
+let length = len(s);                    // 12
+let hello = substring(s, 0, 5);        // "Hello"
+let greeting = concat("Hi ", "there"); // "Hi there"
+```
+
+Math Functions
+--------------
+abs(number): Absolute value
+sqrt(number): Square root
+sin(angle): Sine function
+cos(angle): Cosine function
+pow(base, exponent): Power function
+
+```nx
+let x = -42;
+let abs_x = abs(x);        // 42
+let sqrt_16 = sqrt(16);    // 4.0
+let sin_90 = sin(90);      // 1.0
+```
+
+Collections
+-----------
+HashMap: Key-value pairs
+HashSet: Unique elements
+Vector: Dynamic array
+LinkedList: Linked list
+
+```nx
+// HashMap example
+let mut map = HashMap::new();
+map.insert("key", "value");
+let value = map.get("key");
+
+// Vector example
+let mut vec = Vector::new();
+vec.push(1);
+vec.push(2);
+let first = vec[0];
+```
+
+Crypto Functions
+----------------
+hash_sha256(data): SHA256 hash
+hash_sha512(data): SHA512 hash
+hmac_sha256(key, data): HMAC-SHA256
+aes_encrypt_128(data, key): AES-128 encryption
+aes_decrypt_128(data, key): AES-128 decryption
+
+```nx
+let data = "secret";
+let hash = hash_sha256(data);
+let encrypted = aes_encrypt_128(data, "16-byte-key-here");
+```
+
+Networking
+----------
+http_get(url): HTTP GET request
+http_post(url, data): HTTP POST request
+tcp_connect(host, port): TCP connection
+udp_send(socket, data): UDP send
+
+```nx
+let response = http_get("https://api.example.com/data");
+let tcp_stream = tcp_connect("localhost", 8080);
+```
+
+Threading
+---------
+spawn(function): Spawn new thread
+join(handle): Wait for thread completion
+async_function(): Async function
+await(future): Wait for async result
+
+```nx
+let handle = spawn(fn() {
+    println("Running in thread");
+});
+
+join(handle);
+```
+
+Time Functions
+--------------
+now(): Current timestamp
+sleep(seconds): Sleep for duration
+format_time(timestamp): Format timestamp
+
+```nx
+let current = now();
+sleep(1.5);  // Sleep for 1.5 seconds
+let formatted = format_time(current);
+```
+
+Error Handling
+--------------
+panic(message): Panic with message
+assert(condition, message): Assert condition
+try_divide(a, b): Safe division
+
+```nx
+if condition {
+    panic("Something went wrong");
+}
+
+assert(x > 0, "x must be positive");
+```
+
+================================================================================
+8. ADVANCED FEATURES
+================================================================================
+
+Type Inference
+--------------
+Neksis provides powerful type inference:
+
+```nx
+// Type inference examples
+let x = 42;                    // Inferred as Int
+let y = 3.14;                  // Inferred as Float
+let z = true;                  // Inferred as Bool
+let s = "hello";               // Inferred as String
+
+// Function return type inference
+fn add(a: Int, b: Int) {       // Return type inferred as Int
+    return a + b;
+}
+
+// Generic type inference
+let list = [1, 2, 3];         // Inferred as Vector<Int>
+```
+
+Memory Safety
+-------------
+Built-in borrow checker prevents common errors:
+
+```nx
+let mut x = 42;
+let ref1 = &x;                // Immutable borrow
+// let ref2 = &mut x;         // Error: Cannot borrow mutably while borrowed
+println(ref1);
+// x = 50;                    // Error: Cannot assign while borrowed
+```
+
+Memory Profiling
+----------------
+Track memory usage and detect leaks:
+
+```nx
+// Memory profiling is automatic
+// No explicit API needed
+// Profiler tracks allocations and deallocations
+```
+
+Code Formatting
+--------------
+Automatic code formatting:
+
+```nx
+// Before formatting
+fn main()->Int{let x=42;println("x = "+x);return 0;}
+
+// After formatting
+fn main() -> Int {
+    let x = 42;
+    println("x = " + x);
+    return 0;
+}
+```
+
+Linting
+--------
+Static analysis and style checking:
+
+```nx
+// Linter will warn about:
+let unused_variable = 42;      // Unused variable
+let x = 42;                   // Good: variable used
+println("x = " + x);
+```
+
+Package Management
+-----------------
+Manage dependencies and projects:
+
+```nx
+// neksis.json (package manifest)
+{
+    "name": "my-project",
+    "version": "1.0.0",
+    "dependencies": {
+        "http-client": "1.2.0",
+        "json-parser": "2.1.0"
+    }
+}
+```
+
+IDE Integration
+---------------
+Language Server Protocol support:
+
+- Code completion
+- Go to definition
+- Find references
+- Error diagnostics
+- Symbol search
+- Refactoring support
+
+================================================================================
+9. BEST PRACTICES
+================================================================================
+
+Code Style
+----------
+1. Use meaningful variable names
+2. Write clear function names
+3. Add comments for complex logic
+4. Use consistent indentation
+5. Keep functions small and focused
+
+```nx
+// Good
+fn calculate_total_price(base_price: Float, tax_rate: Float) -> Float {
+    let tax_amount = base_price * tax_rate;
+    return base_price + tax_amount;
+}
+
+// Avoid
+fn calc(x: Float, y: Float) -> Float {
+    return x + x * y;
+}
+```
+
+Error Handling
+--------------
+1. Use safe operations when possible
+2. Provide meaningful error messages
+3. Handle edge cases explicitly
+4. Use assertions for debugging
+
+```nx
+fn safe_divide(a: Int, b: Int) -> Int {
+    if b == 0 {
+        println("Error: Division by zero");
+        return 0;
+    }
+    return a / b;
+}
+```
+
+Performance
+-----------
+1. Use appropriate data structures
+2. Avoid unnecessary allocations
+3. Profile memory usage
+4. Use efficient algorithms
+
+```nx
+// Efficient string concatenation
+let mut result = "";
+for i in 0..1000 {
+    result = result + i;
+}
+
+// More efficient with StringBuilder (future feature)
+```
+
+Testing
+--------
+1. Write unit tests for functions
+2. Test edge cases
+3. Use descriptive test names
+4. Test error conditions
+
+```nx
+fn test_add_function() {
+    let result = add(2, 3);
+    assert(result == 5, "add(2, 3) should equal 5");
+}
+```
+
+Documentation
+-------------
+1. Document public APIs
+2. Use clear examples
+3. Explain complex algorithms
+4. Keep documentation up to date
+
+```nx
+// Calculate the factorial of a number
+// Returns 1 for n <= 1, otherwise n * factorial(n-1)
+fn factorial(n: Int) -> Int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+```
+
+================================================================================
+10. TROUBLESHOOTING
+================================================================================
+
+Common Errors and Solutions
+--------------------------
+
+1. "Undefined variable" error:
+   - Check variable name spelling
+   - Ensure variable is declared before use
+   - Check variable scope
+
+2. "Type mismatch" error:
+   - Verify variable types
+   - Use explicit type conversions
+   - Check function parameter types
+
+3. "Cannot borrow" error:
+   - Avoid multiple mutable borrows
+   - Use immutable borrows when possible
+   - Restructure code to avoid conflicts
+
+4. "Division by zero" error:
+   - Add checks for zero divisors
+   - Use safe division functions
+   - Handle edge cases explicitly
+
+5. "Function not found" error:
+   - Check function name spelling
+   - Ensure function is defined
+   - Check import statements
+
+Debugging Tips
+--------------
+1. Use println() for debugging
+2. Check variable values at runtime
+3. Use assertions for invariants
+4. Profile memory usage
+5. Enable verbose error messages
+
+Performance Issues
+-----------------
+1. Monitor memory usage
+2. Profile hot code paths
+3. Use efficient data structures
+4. Avoid unnecessary allocations
+5. Consider algorithm complexity
+
+Getting Help
+------------
+1. Check the documentation
+2. Use the REPL for experimentation
+3. Look at example code
+4. Search error messages online
+5. Join the community forum
+
+================================================================================
+CONCLUSION
+================================================================================
+
+Neksis is a powerful, safe, and modern programming language designed for 
+productivity and reliability. With its comprehensive standard library, 
+excellent tooling, and strong type system, it's suitable for both learning 
+and production use.
+
+Key Takeaways:
+- Start with simple programs and gradually explore advanced features
+- Use the REPL for experimentation and learning
+- Leverage the type system for safer code
+- Take advantage of the built-in tools for better development experience
+- Follow best practices for maintainable code
+
+Happy coding with Neksis!
+
+================================================================================
+APPENDIX: QUICK REFERENCE
+================================================================================
+
+Command Line:
+neksis run file.nx          # Run a program
+neksis build file.nx        # Build without running
+neksis format file.nx       # Format code
+neksis lint file.nx         # Lint code
+neksis test                 # Run tests
+neksis repl                 # Start REPL
+neksis init project         # Initialize project
+neksis install package      # Install package
+
+File Extensions:
+.nx                         # Neksis source files
+.nx.json                    # Package manifest
+
+Keywords:
+fn, let, if, else, return, true, false
+Int, Float, Bool, String, Void
+while, for, break, continue
+
+Built-in Functions:
+print(), println(), read_line()
+len(), substring(), concat()
+abs(), sqrt(), sin(), cos()
+to_string(), to_int(), to_float()
+
+================================================================================ 

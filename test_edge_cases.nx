@@ -1,0 +1,34 @@
+// Test various edge cases
+let x = 42;
+print("x = " + x);
+
+// Test block with multiple statements
+{
+    let y = 100;
+    let z = 200;
+    print("y = " + y);
+    print("z = " + z);
+}
+
+// Test function definition
+fn test_func() {
+    let a = 10;
+    let b = 20;
+    print("a + b = " + (a + b));
+}
+
+// Test nested blocks
+{
+    let outer = 1;
+    {
+        let inner = 2;
+        print("outer = " + outer);
+        print("inner = " + inner);
+    }
+}
+
+// Test empty block
+{
+}
+
+print("All tests completed!"); 

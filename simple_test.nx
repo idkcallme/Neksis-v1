@@ -1,0 +1,7 @@
+let x = 42;
+print("x = " + x);
+{
+    let y = 100;
+    print("y = " + y);
+}
+print("done"); 

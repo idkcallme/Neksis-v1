@@ -1,0 +1,11 @@
+{
+  "name": "test-project",
+  "version": "0.1.0",
+  "description": "A Nexus project",
+  "author": null,
+  "license": "MIT",
+  "dependencies": {},
+  "dev_dependencies": {},
+  "scripts": {},
+  "entry_point": "src/main.nx"
+}

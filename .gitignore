@@ -1,0 +1,31 @@
+# Rust build artifacts
+target/
+Cargo.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Neksis specific
+*.exe
+*.o
+*.so
+*.dylib
+*.dll
+
+# Cache directories
+.neksis/
+.cache/
+
+# Test outputs
+test_outputs/
+*.test
+
+# Logs
+*.log 
