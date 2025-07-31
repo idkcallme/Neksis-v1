@@ -2,7 +2,7 @@
 
 This directory contains example programs demonstrating various features of the Neksis programming language.
 
-## 📁 Example Files
+## Example Files
 
 ### **Basic Examples**
 - **`hello_world.nx`** - Classic "Hello, World!" program
@@ -28,7 +28,7 @@ This directory contains example programs demonstrating various features of the N
 - **`minimal_test.nx`** - Minimal functionality test
 - **`debug_test.nx`** - Debugging and error handling tests
 
-## 🚀 Running Examples
+## Running Examples
 
 To run any example:
 
@@ -41,7 +41,7 @@ cd examples
 neksis run hello_world.nx
 ```
 
-## 📖 Learning Path
+## Learning Path
 
 1. Start with `hello_world.nx` to understand basic syntax
 2. Try `demo.nx` for simple variable operations
@@ -49,7 +49,7 @@ neksis run hello_world.nx
 4. Run `final_comprehensive_test.nx` to see all features in action
 5. Use the test files to verify your understanding
 
-## 🎯 What Each Example Demonstrates
+## What Each Example Demonstrates
 
 ### **hello_world.nx**
 - Function definition with return type
@@ -76,11 +76,11 @@ neksis run hello_world.nx
 - Language feature validation
 - Compiler behavior verification
 
-## 🔧 Customization
+## Customization
 
 Feel free to modify these examples to experiment with the language. Each example is self-contained and can be run independently.
 
-## 📚 Next Steps
+## Next Steps
 
 After running these examples, try:
 1. Creating your own programs
