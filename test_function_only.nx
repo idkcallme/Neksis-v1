@@ -1,5 +1,0 @@
-fn test_func() {
-    let a = 10;
-    let b = 20;
-    print("a + b = " + (a + b));
-} 

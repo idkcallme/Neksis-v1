@@ -1,5 +1,0 @@
-fn hello() {
-    print("Hello from function!");
-}
-
-hello();

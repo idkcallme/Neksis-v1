@@ -1,5 +1,0 @@
-// Simple test program
-let x = 42;
-let y = "Hello, World!";
-print(y);
-print(x); 

@@ -1,6 +1,0 @@
-let x = 42;
-{
-    let y = 100;
-    print("y = " + y);
-}
-print("x = " + x); 
