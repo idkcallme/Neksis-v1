@@ -56,8 +56,6 @@ neksis repl
 ## Documentation
 
 - **[Complete Guide](NEKSIS_COMPLETE_GUIDE.txt)** - Comprehensive documentation covering tutorials, reference manual, and API documentation
-- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
-- **[Production Readiness](PRODUCTION_READINESS.md)** - Production deployment information
 
 ## Project Structure
 
@@ -162,10 +160,6 @@ fn greet(name: String) -> String {
 - **Linting**: Static analysis and style checking
 - **Package Management**: Dependency resolution
 - **IDE Integration**: LSP support for code completion
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ### Development Setup
 1. Fork the repository
