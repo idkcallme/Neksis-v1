@@ -1,4 +1,4 @@
-use crate::ast::{Program, Statement, Expression, FunctionStatement, LetStatement, ReturnStatement, BinaryOp, UnaryOp, IfExpression, WhileExpression};
+use crate::ast::{Program, Statement, Expression, FunctionStatement, BinaryOp, UnaryOp};
 use crate::error::CompilerError;
 use crate::compiler::CompilerOptions;
 use std::collections::HashSet;

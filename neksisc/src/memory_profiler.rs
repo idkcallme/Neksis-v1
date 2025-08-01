@@ -247,8 +247,8 @@ impl MemoryProfiler {
 
     pub fn start_periodic_reporting(&self, interval: Duration) {
         let stats = Arc::clone(&self.stats);
-        let allocations = Arc::clone(&self.allocations);
-        let start_time = self.start_time;
+        let _allocations = Arc::clone(&self.allocations);
+        let _start_time = self.start_time;
         
         thread::spawn(move || {
             loop {

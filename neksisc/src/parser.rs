@@ -1168,7 +1168,7 @@ impl Parser {
         loop {
             if self.check(&Token::LeftAngle) {
                 // Parse generic type arguments
-                let type_args = self.parse_generic_type_arguments()?;
+                let _type_args = self.parse_generic_type_arguments()?;
                 
                 // Check for function call parentheses after generic type arguments
                 if self.match_token(&Token::LeftParen) {
@@ -1575,7 +1575,7 @@ impl Parser {
                 return Err("Expected '=>' or '{' after lambda parameters".to_string());
             };
             return Ok(Expression::Lambda(LambdaExpression { parameters, body }));
-        } else if let Token::InterpolatedString(parts) = self.peek() {
+        } else if let Token::InterpolatedString(_parts) = self.peek() {
             // Clone the parts before advancing to avoid borrow checker issues
             let parts = if let Token::InterpolatedString(parts) = self.peek() {
                 parts.clone()
@@ -2020,7 +2020,7 @@ impl Parser {
         
         self.consume(&Token::In, "Expected 'in' in for loop")?;
         
-        let body = Box::new(self.parse_expression()?);
+        let _body = Box::new(self.parse_expression()?);
         
         Ok(*iterator)
     }
@@ -2159,7 +2159,7 @@ impl Parser {
         self.consume(&Token::Comma, "Expected ',' after pointer")?;
         
         let new_size = self.parse_expression()?;
-        let type_annotation = if self.match_token(&Token::Comma) {
+        let _type_annotation = if self.match_token(&Token::Comma) {
             Some(self.parse_type()?)
         } else {
             None

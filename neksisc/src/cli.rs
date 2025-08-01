@@ -26,7 +26,22 @@ impl CLI {
             return self.show_help();
         }
 
-        match args[1].as_str() {
+        let command = &args[1];
+        
+        // Check for version and help flags first
+        if command.starts_with("-") || command == "help" || command == "version" {
+            match command.as_str() {
+                "help" | "--help" | "-h" => return self.show_help(),
+                "version" | "--version" | "-v" => return self.show_version(),
+                _ => {
+                    // If it starts with - but isn't a recognized flag, show help
+                    return self.show_help();
+                }
+            }
+        }
+
+        // Handle subcommands
+        match command.as_str() {
             "init" => self.handle_init(&args[2..]),
             "build" => self.handle_build(&args[2..]),
             "run" => self.handle_run(&args[2..]),
@@ -35,8 +50,7 @@ impl CLI {
             "test" => self.handle_test(&args[2..]),
             "format" => self.handle_format(&args[2..]),
             "lint" => self.handle_lint(&args[2..]),
-            "help" | "--help" | "-h" => self.show_help(),
-            "version" | "--version" | "-v" => self.show_version(),
+            "repl" => self.handle_repl(&args[2..]),
             _ => {
                 // If no command is specified, try to compile and run the file directly
                 self.handle_direct_execution(&args[1..])
@@ -232,6 +246,17 @@ impl CLI {
         Ok(())
     }
 
+    fn handle_repl(&self, _args: &[String]) -> Result<(), CompilerError> {
+        println!("🚀 Starting Neksis REPL...");
+        println!("Type 'exit' or 'quit' to exit, 'help' for commands");
+        println!();
+        
+        let mut repl = crate::repl::REPL::new();
+        repl.run()?;
+        
+        Ok(())
+    }
+
     fn handle_direct_execution(&self, args: &[String]) -> Result<(), CompilerError> {
         let source_file = &args[0];
         
@@ -272,6 +297,7 @@ impl CLI {
         println!("  test                    Run the test suite");
         println!("  format <file.nx>        Format a neksis source file");
         println!("  lint <file.nx>          Lint a neksis source file");
+        println!("  repl                    Start the interactive REPL");
         println!("  help                    Show this help message");
         println!("  version                 Show version information");
         println!();
@@ -280,6 +306,7 @@ impl CLI {
         println!("  neksis run src/main.nx");
         println!("  neksis format src/main.nx");
         println!("  neksis lint src/main.nx");
+        println!("  neksis repl              # Start interactive REPL");
         println!("  neksis src/main.nx      # Direct execution");
         println!();
         println!("For more information, visit: https://github.com/nexus-lang/nexus");

@@ -1,6 +1,4 @@
-fn main() {
-    let x = 42;
-    let y = 10;
-    let result = x + y;
-    return;
+fn main() -> Int {
+    println("Hello, World!");
+    return 0;
 } 

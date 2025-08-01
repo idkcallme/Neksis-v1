@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Literal {
     Int(i64),
@@ -58,6 +60,14 @@ pub enum Expression {
     InterpolatedString(InterpolatedStringExpression),
     ListComprehension(ListComprehensionExpression),
     Slice(SliceExpression),
+    // Add missing variants for type inference and borrow checker
+    BinaryExpression { left: Box<Expression>, operator: BinaryOperator, right: Box<Expression> },
+    UnaryExpression { operator: UnaryOperator, operand: Box<Expression> },
+    CallExpression { function: String, arguments: Vec<Expression> },
+    IfExpression { condition: Box<Expression>, then_branch: Box<Expression>, else_branch: Option<Box<Expression>> },
+    BlockExpression { statements: Vec<Statement> },
+    ReferenceExpression { target: Box<Expression>, borrow_type: BorrowType },
+    DereferenceExpression { target: Box<Expression> },
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -174,6 +184,16 @@ pub enum BinaryOperator {
     SubtractAssign,
     MultiplyAssign,
     DivideAssign,
+    // Add missing variants for type inference
+    Sub,
+    Mul,
+    Div,
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -189,6 +209,8 @@ pub enum UnaryOperator {
     BorrowMut,
     Move,
     Drop,
+    // Add missing variant for type inference
+    Neg,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -200,6 +222,9 @@ pub enum BorrowType {
     // Add missing variants
     Borrowed,
     MutableBorrowed,
+    // Add missing variants for borrow checker
+    Immutable,
+    Mutable,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -225,6 +250,12 @@ pub enum Statement {
     // Add missing variant
     GenericFunction(GenericFunctionStatement),
     Class(ClassStatement),
+    // Add missing variants for type inference and borrow checker
+    LetStatement { name: String, value: Box<Expression>, var_type: Option<Type> },
+    AssignmentStatement { name: String, value: Box<Expression> },
+    FunctionStatement { name: String, parameters: Vec<Parameter>, return_type: Option<Type>, body: Box<Expression> },
+    ReturnStatement { value: Option<Box<Expression>> },
+    ExpressionStatement { expression: Box<Expression> },
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -354,6 +385,110 @@ pub enum Type {
     Slice(Box<Type>),
     Tuple(Vec<Type>),
     Union(Vec<Type>),
+    // Add missing variants for type inference
+    Any,
+    Null,
+}
+
+impl fmt::Display for Type {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Type::Int => write!(f, "int"),
+            Type::Float => write!(f, "float"),
+            Type::Bool => write!(f, "bool"),
+            Type::String => write!(f, "string"),
+            Type::Char => write!(f, "char"),
+            Type::Void => write!(f, "void"),
+            Type::Never => write!(f, "never"),
+            Type::Array(element_type, size) => write!(f, "[{}; {}]", element_type, size),
+            Type::Pointer(pointee_type) => write!(f, "*{}", pointee_type),
+            Type::Reference(referent_type, borrow_type, lifetime) => {
+                let borrow_str = match borrow_type {
+                    BorrowType::ImmutableBorrow => "&",
+                    BorrowType::MutableBorrow => "&mut ",
+                    BorrowType::Move => "move ",
+                    BorrowType::Copy => "copy ",
+                    BorrowType::Borrowed => "&",
+                    BorrowType::MutableBorrowed => "&mut ",
+                    BorrowType::Immutable => "&",
+                    BorrowType::Mutable => "&mut ",
+                };
+                let lifetime_str = lifetime.as_ref().map(|l| format!("'{} ", l.name)).unwrap_or_default();
+                write!(f, "{}{}{}", lifetime_str, borrow_str, referent_type)
+            }
+            Type::Function(params, return_type) => {
+                write!(f, "fn(")?;
+                for (i, param) in params.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", param)?;
+                }
+                write!(f, ") -> {}", return_type)
+            }
+            Type::Struct(name) => write!(f, "struct {}", name),
+            Type::Enum(name) => write!(f, "enum {}", name),
+            Type::Trait(name) => write!(f, "trait {}", name),
+            Type::Generic(name, type_args) => {
+                write!(f, "{}", name)?;
+                if !type_args.is_empty() {
+                    write!(f, "<")?;
+                    for (i, arg) in type_args.iter().enumerate() {
+                        if i > 0 {
+                            write!(f, ", ")?;
+                        }
+                        write!(f, "{}", arg)?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Type::Unknown => write!(f, "unknown"),
+            Type::GenericType(name, type_args) => {
+                write!(f, "{}", name)?;
+                if !type_args.is_empty() {
+                    write!(f, "<")?;
+                    for (i, arg) in type_args.iter().enumerate() {
+                        if i > 0 {
+                            write!(f, ", ")?;
+                        }
+                        write!(f, "{}", arg)?;
+                    }
+                    write!(f, ">")?;
+                }
+                Ok(())
+            }
+            Type::Owned(inner_type) => write!(f, "owned {}", inner_type),
+            Type::Shared(inner_type) => write!(f, "shared {}", inner_type),
+            Type::Weak(inner_type) => write!(f, "weak {}", inner_type),
+            Type::Unique(inner_type) => write!(f, "unique {}", inner_type),
+            Type::Result(ok_type, err_type) => write!(f, "Result<{}, {}>", ok_type, err_type),
+            Type::Option(inner_type) => write!(f, "Option<{}>", inner_type),
+            Type::Slice(inner_type) => write!(f, "[{}]", inner_type),
+            Type::Tuple(types) => {
+                write!(f, "(")?;
+                for (i, t) in types.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", t)?;
+                }
+                write!(f, ")")
+            }
+            Type::Union(types) => {
+                write!(f, "union(")?;
+                for (i, t) in types.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, " | ")?;
+                    }
+                    write!(f, "{}", t)?;
+                }
+                write!(f, ")")
+            }
+            Type::Any => write!(f, "any"),
+            Type::Null => write!(f, "null"),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

@@ -405,6 +405,12 @@ impl SemanticAnalyzer {
                     }
                     UnaryOperator::Reference => Ok(TypeValue::Pointer),
                     UnaryOperator::ReferenceMut => Ok(TypeValue::Pointer),
+                    UnaryOperator::Neg => {
+                        match operand_type {
+                            TypeValue::Int | TypeValue::Float => Ok(operand_type),
+                            _ => self.ownership_error_or_warning("Cannot negate non-numeric value"),
+                        }
+                    }
                 }
             }
             Expression::FunctionCall(call, args) => self.analyze_function_call(call, args),
@@ -439,6 +445,62 @@ impl SemanticAnalyzer {
             Expression::Loop(loop_expr) => {
                 self.analyze_expression(&loop_expr.body)?;
                 Ok(TypeValue::Void)
+            }
+            Expression::BinaryExpression { left, operator: _, right } => {
+                let left_type = self.analyze_expression(left)?;
+                let right_type = self.analyze_expression(right)?;
+                
+                // Check type compatibility for binary operations
+                match (&left_type, &right_type) {
+                    (TypeValue::Int, TypeValue::Int) => Ok(TypeValue::Int),
+                    (TypeValue::Float, TypeValue::Float) => Ok(TypeValue::Float),
+                    (TypeValue::Int, TypeValue::Float) => Ok(TypeValue::Float),
+                    (TypeValue::Float, TypeValue::Int) => Ok(TypeValue::Float),
+                    (TypeValue::Bool, TypeValue::Bool) => Ok(TypeValue::Bool),
+                    _ => self.ownership_error_or_warning(&format!("Invalid binary operation between {:?} and {:?}", left_type, right_type)),
+                }
+            }
+            Expression::UnaryExpression { operator: _, operand } => {
+                let operand_type = self.analyze_expression(operand)?;
+                Ok(operand_type) // Simplified for now
+            }
+            Expression::CallExpression { function: _, arguments } => {
+                // Simplified function call analysis
+                for arg in arguments {
+                    self.analyze_expression(arg)?;
+                }
+                Ok(TypeValue::Unknown)
+            }
+            Expression::IfExpression { condition, then_branch, else_branch } => {
+                let condition_type = self.analyze_expression(condition)?;
+                if condition_type != TypeValue::Bool {
+                    return self.ownership_error_or_warning("If condition must be boolean");
+                }
+                
+                let then_type = self.analyze_expression(then_branch)?;
+                let else_type = if let Some(ref else_expr) = else_branch {
+                    self.analyze_expression(else_expr)?
+                } else {
+                    TypeValue::Void
+                };
+                
+                if then_type.is_compatible_with(&else_type) {
+                    Ok(then_type)
+                } else {
+                    self.ownership_error_or_warning(&format!("If branches have incompatible types: {:?} and {:?}", then_type, else_type))
+                }
+            }
+            Expression::BlockExpression { statements } => {
+                for stmt in statements {
+                    self.analyze_statement(stmt)?;
+                }
+                Ok(TypeValue::Void)
+            }
+            Expression::ReferenceExpression { target: _, borrow_type: _ } => {
+                Ok(TypeValue::Reference(Box::new(TypeValue::Unknown), BorrowType::Borrowed, None))
+            }
+            Expression::DereferenceExpression { target: _ } => {
+                Ok(TypeValue::Unknown)
             }
             Expression::Block(statements) => {
                 let mut last_type = TypeValue::Void;
@@ -706,7 +768,9 @@ impl SemanticAnalyzer {
             Type::Pointer(_) => Ok(TypeValue::Pointer), // Add pointer type support
             Type::Char => Ok(TypeValue::String), // Treat char as string for now
             Type::Trait(_) => Ok(TypeValue::Unknown), // Treat traits as unknown for now
-            Type::Generic(_, _) => Ok(TypeValue::Unknown), // Treat generics as unknown for now
+            Type::Generic(_, _) => Ok(TypeValue::Unknown),
+            Type::Any => Ok(TypeValue::Unknown),
+            Type::Null => Ok(TypeValue::Unknown), // Treat generics as unknown for now
         }
     }
 

@@ -1,7 +1,7 @@
 let x = 42;
-print("x = " + x);
+println("x = " + x);
 {
     let y = 100;
-    print("y = " + y);
+    println("y = " + y);
 }
-print("done"); 
+println("done"); 

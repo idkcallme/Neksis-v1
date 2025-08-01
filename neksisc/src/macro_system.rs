@@ -199,7 +199,7 @@ impl MacroSystem {
 
     fn validate_transformation(&self, transformation: &MacroTransformation) -> Result<(), CompilerError> {
         match transformation {
-            MacroTransformation::Substitution(from, to) => {
+            MacroTransformation::Substitution(from, _to) => {
                 if from.is_empty() {
                     return Err(CompilerError::runtime_error("Substitution 'from' pattern cannot be empty"));
                 }
@@ -390,7 +390,7 @@ impl MacroSystem {
         }
     }
 
-    fn infer_type_from_context(&self, context: &MacroContext) -> Result<String, CompilerError> {
+    fn infer_type_from_context(&self, _context: &MacroContext) -> Result<String, CompilerError> {
         // Simple type inference
         // In a real implementation, this would analyze the context more thoroughly
         Ok("auto".to_string())
@@ -452,11 +452,11 @@ impl MacroSystem {
                     self.format_binary_operator(operator),
                     self.format_expression(right))
             }
-            Expression::FunctionCall { name, arguments } => {
+            Expression::FunctionCall(name, arguments) => {
                 let args_str: Vec<String> = arguments.iter()
-                    .map(|a| self.format_expression(a))
+                    .map(|a| self.format_expression(&a.value))
                     .collect();
-                format!("{}({})", name, args_str.join(", "))
+                format!("{}({})", self.format_expression(name), args_str.join(", "))
             }
             _ => format!("{:?}", expr),
         }
@@ -473,7 +473,7 @@ impl MacroSystem {
                 format!("fn {}({}) -> {} {{ ... }}", 
                     func.name,
                     func.signature.parameters.iter()
-                        .map(|p| format!("{}: {}", p.name, self.format_type(&p.param_type)))
+                        .map(|p| format!("{}: {}", p.name, self.format_type(&p.type_annotation)))
                         .collect::<Vec<_>>()
                         .join(", "),
                     func.signature.return_type.as_ref()
@@ -526,6 +526,15 @@ impl MacroSystem {
             BinaryOperator::SubtractAssign => "-=",
             BinaryOperator::MultiplyAssign => "*=",
             BinaryOperator::DivideAssign => "/=",
+            BinaryOperator::Sub => "-",
+            BinaryOperator::Mul => "*",
+            BinaryOperator::Div => "/",
+            BinaryOperator::Eq => "==",
+            BinaryOperator::Ne => "!=",
+            BinaryOperator::Lt => "<",
+            BinaryOperator::Le => "<=",
+            BinaryOperator::Gt => ">",
+            BinaryOperator::Ge => ">=",
         }
     }
 

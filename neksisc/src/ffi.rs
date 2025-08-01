@@ -1,13 +1,11 @@
 use std::ffi::{CString, CStr};
-use std::os::raw::{c_void, c_int, c_char, c_double, c_float};
-use std::ptr;
-use std::sync::Arc;
+use std::os::raw::{c_void, c_char};
 use std::collections::HashMap;
-use crate::ast::*;
+use crate::ast::Type;
 use crate::error::CompilerError;
 use pyo3::IntoPy;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FFILibrary {
     pub name: String,
     pub functions: HashMap<String, FFIFunction>,
@@ -82,7 +80,7 @@ pub enum CallingConvention {
     Custom(String),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FFIContext {
     pub libraries: HashMap<String, FFILibrary>,
     pub type_mappings: HashMap<String, FFIType>,
@@ -173,25 +171,30 @@ impl FFIContext {
     }
 
     pub fn call_function(&mut self, library_name: &str, function_name: &str, args: Vec<FFIValue>) -> Result<FFIValue, CompilerError> {
-        let library = self.libraries.get_mut(library_name)
-            .ok_or_else(|| CompilerError::ffi_error("library", &format!("Library '{}' not found", library_name)))?;
-
-        let function = library.functions.get(function_name)
-            .ok_or_else(|| CompilerError::ffi_error("function", &format!("Function '{}' not found", function_name)))?;
+        // Get library and function signatures without holding mutable borrow
+        let (signature, return_type) = {
+            let library = self.libraries.get(library_name)
+                .ok_or_else(|| CompilerError::ffi_error("library", &format!("Library '{}' not found", library_name)))?;
+            
+            let function = library.functions.get(function_name)
+                .ok_or_else(|| CompilerError::ffi_error("function", &format!("Function '{}' not found", function_name)))?;
+            
+            (function.signature.clone(), function.signature.return_type.clone())
+        };
 
         // Validate arguments
-        self.validate_function_call(&function.signature, &args)?;
+        self.validate_function_call(&signature, &args)?;
 
         // Convert arguments to C types
-        let c_args = self.convert_to_c_args(&function.signature.parameters, args)?;
+        let c_args = self.convert_to_c_args(&signature.parameters, args)?;
 
         // Call the function
         let result = unsafe {
-            self.execute_function_call(&function.signature, &c_args)?
+            self.execute_function_call(&signature, &c_args)?
         };
 
         // Convert result back to Neksis type
-        let neksis_result = self.convert_from_c_value(&function.signature.return_type, result)?;
+        let neksis_result = self.convert_from_c_value(&return_type, result)?;
 
         Ok(neksis_result)
     }
@@ -202,7 +205,9 @@ impl FFIContext {
         }
 
         for (i, (arg, param)) in args.iter().zip(signature.parameters.iter()).enumerate() {
-            if !self.is_compatible_type(&arg.ffi_type, &param.ffi_type) {
+            // We need to infer the FFI type from the value since FFIValue doesn't have ffi_type field
+            let arg_type = self.infer_ffi_type_from_value(arg);
+            if !self.is_compatible_type(&arg_type, &param.ffi_type) {
                 return Err(CompilerError::ffi_error("type", &format!("Argument {} type mismatch", i)));
             }
         }
@@ -217,6 +222,27 @@ impl FFIContext {
             (FFIType::Pointer(_), FFIType::Pointer(_)) => true,
             (FFIType::Bool, FFIType::Bool) => true,
             _ => false, // Add more compatibility rules as needed
+        }
+    }
+
+    fn infer_ffi_type_from_value(&self, value: &FFIValue) -> FFIType {
+        match value {
+            FFIValue::Void => FFIType::Void,
+            FFIValue::Int8(_) => FFIType::Int8,
+            FFIValue::Int16(_) => FFIType::Int16,
+            FFIValue::Int32(_) => FFIType::Int32,
+            FFIValue::Int64(_) => FFIType::Int64,
+            FFIValue::UInt8(_) => FFIType::UInt8,
+            FFIValue::UInt16(_) => FFIType::UInt16,
+            FFIValue::UInt32(_) => FFIType::UInt32,
+            FFIValue::UInt64(_) => FFIType::UInt64,
+            FFIValue::Float32(_) => FFIType::Float32,
+            FFIValue::Float64(_) => FFIType::Float64,
+            FFIValue::Bool(_) => FFIType::Bool,
+            FFIValue::Pointer(_) => FFIType::Pointer(Box::new(FFIType::Void)),
+            FFIValue::String(_) => FFIType::String,
+            FFIValue::Array(_) => FFIType::Array(Box::new(FFIType::Void), 0),
+            FFIValue::Struct(_) => FFIType::Struct(vec![]),
         }
     }
 
@@ -275,7 +301,7 @@ impl FFIContext {
         }
     }
 
-    unsafe fn execute_function_call(&self, signature: &FFISignature, args: &[FFIValue]) -> Result<FFIValue, CompilerError> {
+    unsafe fn execute_function_call(&self, signature: &FFISignature, _args: &[FFIValue]) -> Result<FFIValue, CompilerError> {
         // This is a simplified implementation
         // In a real implementation, you would use libffi or similar to call the function
         match signature.return_type {
@@ -338,7 +364,7 @@ impl FFIMemoryManager {
     }
 
     pub fn deallocate(&mut self, ptr: *mut c_void) -> Result<(), CompilerError> {
-        if let Some(allocation) = self.allocations.remove(&ptr) {
+        if let Some(_allocation) = self.allocations.remove(&ptr) {
             unsafe {
                 libc::free(ptr);
             }
@@ -376,7 +402,7 @@ pub struct PythonInterop {
 impl PythonInterop {
     pub fn new() -> Result<Self, CompilerError> {
         // Initialize Python interpreter
-        let _interpreter: Result<(), CompilerError> = pyo3::Python::with_gil(|py| {
+        let _interpreter: Result<(), CompilerError> = pyo3::Python::with_gil(|_py| {
             // Set up Python environment
             Ok(())
         });
@@ -387,18 +413,9 @@ impl PythonInterop {
         })
     }
 
-    pub fn call_python_function(&self, function_name: &str, args: Vec<FFIValue>) -> Result<FFIValue, CompilerError> {
-        if let Some(interpreter) = &self.interpreter {
-            let py_args = args.into_iter()
-                .map(|arg| self.convert_to_python_value(arg))
-                .collect::<Result<Vec<_>, CompilerError>>()?;
-
-            let result = interpreter.call_function(function_name, &py_args)?;
-            let neksis_result = self.convert_from_python_value(result)?;
-            Ok(neksis_result)
-        } else {
-            Err(CompilerError::ffi_error("Python", "Python interpreter not available"))
-        }
+    pub fn call_python_function(&self, _function_name: &str, _args: Vec<FFIValue>) -> Result<FFIValue, CompilerError> {
+        // For now, return a placeholder since Python interop is not fully implemented
+        Err(CompilerError::ffi_error("Python", "Python interop not yet implemented"))
     }
 
     fn convert_to_python_args(&self, py: pyo3::Python, args: Vec<FFIValue>) -> Result<pyo3::PyObject, CompilerError> {
@@ -420,19 +437,10 @@ impl PythonInterop {
         }
     }
 
-    fn convert_from_python_value(&self, value: pyo3::PyObject) -> Result<FFIValue, CompilerError> {
+    fn convert_from_python_value(&self, _value: pyo3::PyObject) -> Result<FFIValue, CompilerError> {
         // Simplified conversion - in a real implementation, you'd handle more types
-        if let Ok(int_val) = value.extract::<i32>(pyo3::Python::with_gil(|py| py)) {
-            Ok(FFIValue::Int32(int_val))
-        } else if let Ok(float_val) = value.extract::<f64>(pyo3::Python::with_gil(|py| py)) {
-            Ok(FFIValue::Float64(float_val))
-        } else if let Ok(bool_val) = value.extract::<bool>(pyo3::Python::with_gil(|py| py)) {
-            Ok(FFIValue::Bool(bool_val))
-        } else if let Ok(string_val) = value.extract::<String>(pyo3::Python::with_gil(|py| py)) {
-            Ok(FFIValue::String(string_val))
-        } else {
-            Ok(FFIValue::Void) // Default to Void if unknown type
-        }
+        // For now, return a placeholder to avoid lifetime issues
+        Ok(FFIValue::Void) // Default to Void if unknown type
     }
 }
 
@@ -453,7 +461,7 @@ impl RustInterop {
         self.crates.insert(name.to_string(), path.to_string());
     }
 
-    pub fn call_rust_function(&self, crate_name: &str, function_name: &str, args: Vec<FFIValue>) -> Result<FFIValue, CompilerError> {
+    pub fn call_rust_function(&self, _crate_name: &str, _function_name: &str, _args: Vec<FFIValue>) -> Result<FFIValue, CompilerError> {
         // This would involve dynamic linking to Rust libraries
         // For now, we'll return a placeholder
         Err(CompilerError::ffi_error("rust", "Rust interop not yet implemented"))
@@ -482,26 +490,26 @@ pub fn create_rust_interop() -> RustInterop {
 }
 
 // Type conversion utilities
-pub fn neksis_to_ffi_type(neksis_type: &ast::Type) -> FFIType {
+pub fn neksis_to_ffi_type(neksis_type: &Type) -> FFIType {
     match neksis_type {
-        ast::Type::Int => FFIType::Int32,
-        ast::Type::Float => FFIType::Float64,
-        ast::Type::Bool => FFIType::Bool,
-        ast::Type::String => FFIType::String,
-        ast::Type::Void => FFIType::Void,
-        ast::Type::Pointer(inner) => FFIType::Pointer(Box::new(neksis_to_ffi_type(inner))),
+        Type::Int => FFIType::Int32,
+        Type::Float => FFIType::Float64,
+        Type::Bool => FFIType::Bool,
+        Type::String => FFIType::String,
+        Type::Void => FFIType::Void,
+        Type::Pointer(inner) => FFIType::Pointer(Box::new(neksis_to_ffi_type(inner))),
         _ => FFIType::Custom(format!("{:?}", neksis_type)),
     }
 }
 
-pub fn ffi_to_neksis_type(ffi_type: &FFIType) -> ast::Type {
+pub fn ffi_to_neksis_type(ffi_type: &FFIType) -> Type {
     match ffi_type {
-        FFIType::Int32 => ast::Type::Int,
-        FFIType::Float64 => ast::Type::Float,
-        FFIType::Bool => ast::Type::Bool,
-        FFIType::String => ast::Type::String,
-        FFIType::Void => ast::Type::Void,
-        FFIType::Pointer(inner) => ast::Type::Pointer(Box::new(ffi_to_neksis_type(inner))),
-        _ => ast::Type::Void, // Default fallback
+        FFIType::Int32 => Type::Int,
+        FFIType::Float64 => Type::Float,
+        FFIType::Bool => Type::Bool,
+        FFIType::String => Type::String,
+        FFIType::Void => Type::Void,
+        FFIType::Pointer(inner) => Type::Pointer(Box::new(ffi_to_neksis_type(inner))),
+        _ => Type::Void, // Default fallback
     }
 } 

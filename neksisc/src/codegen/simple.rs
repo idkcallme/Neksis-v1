@@ -1,8 +1,8 @@
 use crate::ast::{
-    Expression, Literal, Type, BinaryOperator, UnaryOperator,
+    Expression, Literal, BinaryOperator, UnaryOperator,
     IfExpression, WhileExpression, LoopExpression, BoxExpression,
     RcExpression, ArcExpression, CellExpression, RefCellExpression,
-    MallocExpression, FreeExpression, ReallocExpression, TryCatchExpression,
+    MallocExpression, FreeExpression, ReallocExpression,
     MatchExpression, SpawnExpression, JoinExpression, ChannelExpression,
     TryExpression, PipelineExpression, LifetimeExpression, StructLiteralExpression,
     MemberAccessExpression, LetStatement, AssignmentStatement, ReturnStatement,
@@ -148,7 +148,36 @@ impl SimpleCodeGen {
             Statement::Struct(_) | Statement::Enum(_) | Statement::Use(_) => Ok("0".to_string()), // TODO: Implement
             Statement::GenericFunction(_) => Ok("0".to_string()), // TODO: Implement generic functions
             Statement::Trait(_) | Statement::Impl(_) => Ok("0".to_string()), // TODO: Implement traits and impls
-            Statement::Class(_) => Ok("0".to_string()), // TODO: Implement class codegen
+            Statement::Class(_) => Ok("0".to_string()),
+            Statement::LetStatement { name, value, var_type } => {
+                let value_code = self.generate_expression(value)?;
+                let type_annotation = var_type.as_ref().map(|t| format!(": {}", t)).unwrap_or_default();
+                Ok(format!("let {}{} = {};", name, type_annotation, value_code))
+            }
+            Statement::AssignmentStatement { name, value } => {
+                let value_code = self.generate_expression(value)?;
+                Ok(format!("{} = {};", name, value_code))
+            }
+            Statement::FunctionStatement { name, parameters, return_type, body } => {
+                let param_list = parameters.iter()
+                    .map(|p| format!("{}: {}", p.name, p.type_annotation))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let return_annotation = return_type.as_ref().map(|t| format!(" -> {}", t)).unwrap_or_default();
+                let body_code = self.generate_expression(body)?;
+                Ok(format!("fn {}({}){} {{ {} }}", name, param_list, return_annotation, body_code))
+            }
+            Statement::ReturnStatement { value } => {
+                let value_code = value.as_ref()
+                    .map(|v| self.generate_expression(v))
+                    .transpose()?
+                    .unwrap_or_else(|| "".to_string());
+                Ok(format!("return {};", value_code))
+            }
+            Statement::ExpressionStatement { expression } => {
+                let expr_code = self.generate_expression(expression)?;
+                Ok(format!("{};", expr_code))
+            } // TODO: Implement class codegen
         }
     }
 
@@ -469,6 +498,13 @@ impl SimpleCodeGen {
                 if should_emit_asm() {
                     println!("  ; {} = {} (unary op)", temp, operand);
                     println!("  mov {}, {}", temp, operand);
+                }
+            }
+            crate::ast::UnaryOperator::Neg => {
+                if should_emit_asm() {
+                    println!("  ; {} = -{}", temp, operand);
+                    println!("  mov {}, {}", temp, operand);
+                    println!("  neg {}", temp);
                 }
             }
         }

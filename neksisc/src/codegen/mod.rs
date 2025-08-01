@@ -3,7 +3,7 @@ pub mod simple;
 #[cfg(feature = "llvm-backend")]
 pub mod llvm;
 
-use crate::ast::{Program, Statement, Expression, FunctionStatement, LetStatement, ReturnStatement};
+use crate::ast::Program;
 use crate::error::CompilerError;
 use crate::compiler::CompilerOptions;
 

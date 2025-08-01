@@ -1,5 +1,5 @@
 use crate::ast::{
-    Program, Statement, Expression, Literal, LetStatement, ReturnStatement, FunctionStatement, BinaryOperator
+    Program, Statement, Expression, Literal, BinaryOperator
 };
 use crate::vm::BytecodeInstruction;
 use crate::error::CompilerError;

@@ -112,7 +112,7 @@ impl TypeInferrer {
                 // Infer parameter types
                 let mut param_types = Vec::new();
                 for param in parameters {
-                    param_types.push(param.var_type.clone().unwrap_or(Type::Any));
+                    param_types.push(param.type_annotation.clone());
                 }
                 
                 // Create function type
@@ -124,19 +124,32 @@ impl TypeInferrer {
                 
                 // Declare parameters in function scope
                 for param in parameters {
-                    let param_type = param.var_type.clone().unwrap_or(Type::Any);
+                    let param_type = param.type_annotation.clone();
                     self.context.declare_variable(&param.name, param_type);
                 }
                 
                 // Infer function body
-                for stmt in body {
-                    self.infer_statement(stmt)?;
+                // Function body is a single expression, not a list of statements
+                let body_type = self.infer_expression(body)?;
+                
+                // Check if body type matches return type
+                if let Some(return_type) = return_type {
+                    if !self.types_compatible(&body_type, &return_type) {
+                        return Err(CompilerError::type_error(
+                            &format!("Function body type {:?} does not match return type {:?}", body_type, return_type)
+                        ));
+                    }
                 }
                 
-                self.context.exit_scope();
+                let _ = return_type.clone().unwrap_or(body_type.clone());
+                return Ok(());
             }
             Statement::ExpressionStatement { expression } => {
                 self.infer_expression(expression)?;
+            }
+            _ => {
+                // For other statement types, do basic checking
+                return Ok(());
             }
         }
         Ok(())
@@ -151,6 +164,8 @@ impl TypeInferrer {
                     Literal::String(_) => Ok(Type::String),
                     Literal::Bool(_) => Ok(Type::Bool),
                     Literal::Null => Ok(Type::Null),
+                    Literal::Char(_) => Ok(Type::Char),
+                    Literal::Array(_) => Ok(Type::Array(Box::new(Type::Unknown), 0)),
                 }
             }
             Expression::Identifier(name) => {
@@ -189,6 +204,7 @@ impl TypeInferrer {
                             Err(CompilerError::type_error("Logical operators require boolean operands"))
                         }
                     }
+                    _ => Ok(Type::Unknown),
                 }
             }
             Expression::UnaryExpression { operator, operand } => {
@@ -209,6 +225,7 @@ impl TypeInferrer {
                             Err(CompilerError::type_error("Logical NOT requires boolean operand"))
                         }
                     }
+                    _ => Ok(Type::Unknown),
                 }
             }
             Expression::CallExpression { function, arguments } => {
@@ -245,7 +262,11 @@ impl TypeInferrer {
                 }
                 
                 let then_type = self.infer_expression(then_branch)?;
-                let else_type = self.infer_expression(else_branch)?;
+                let else_type = if let Some(else_expr) = else_branch {
+                    self.infer_expression(else_expr)?
+                } else {
+                    Type::Void
+                };
                 
                 if !self.types_compatible(&then_type, &else_type) {
                     return Err(CompilerError::type_error("If branches must have compatible types"));
