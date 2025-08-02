@@ -1,0 +1,22 @@
+// Testing control flow structures
+fn main() -> Int {
+    // Testing if-else
+    let x: Int = 10;
+    
+    if x > 5 {
+        println("x is greater than 5");
+    } else {
+        println("x is 5 or less");
+    }
+    
+    // Testing while loop - simple version
+    let i: Int = 0;
+    while i < 3 {
+        println("Loop iteration:");
+        println(i);
+        let next_i: Int = i + 1;
+        i = next_i;
+    }
+    
+    return 0;
+}

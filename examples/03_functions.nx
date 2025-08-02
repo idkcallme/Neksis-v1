@@ -1,0 +1,103 @@
+// Neksis Tutorial: Functions and Recursion
+// Run with: neksis examples/03_functions.nx
+
+// Simple function with parameters
+fn add(a: Int, b: Int) -> Int {
+    return a + b;
+}
+
+// Function with multiple operations
+fn calculate(x: Int) -> Int {
+    let doubled: Int = x * 2;
+    let plusTen: Int = doubled + 10;
+    return plusTen;
+}
+
+// Recursive function: factorial
+fn factorial(n: Int) -> Int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+// Recursive function: fibonacci
+fn fibonacci(n: Int) -> Int {
+    if n <= 1 {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// Mathematical function: power
+fn power(base: Int, exp: Int) -> Int {
+    if exp == 0 {
+        return 1;
+    }
+    return base * power(base, exp - 1);
+}
+
+// Boolean function: prime check
+fn isPrime(n: Int) -> Bool {
+    if n <= 1 {
+        return false;
+    }
+    if n <= 3 {
+        return true;
+    }
+    if n % 2 == 0 || n % 3 == 0 {
+        return false;
+    }
+    
+    let i: Int = 5;
+    while i * i <= n {
+        if n % i == 0 || n % (i + 2) == 0 {
+            return false;
+        }
+        i = i + 6;
+    }
+    return true;
+}
+
+fn main() -> Int {
+    println("=== FUNCTIONS TUTORIAL ===");
+    
+    // 1. Simple function calls
+    println("\n=== SIMPLE FUNCTIONS ===");
+    let sum: Int = add(5, 7);
+    println("add(5, 7) = " + sum);
+    
+    let result: Int = calculate(8);
+    println("calculate(8) = " + result);
+    
+    // 2. Recursive functions
+    println("\n=== RECURSIVE FUNCTIONS ===");
+    println("factorial(5) = " + factorial(5));
+    println("factorial(7) = " + factorial(7));
+    
+    println("fibonacci(8) = " + fibonacci(8));
+    println("fibonacci(10) = " + fibonacci(10));
+    
+    println("power(2, 8) = " + power(2, 8));
+    println("power(3, 4) = " + power(3, 4));
+    
+    // 3. Boolean functions
+    println("\n=== BOOLEAN FUNCTIONS ===");
+    let testNumbers: Int = 2;
+    while testNumbers <= 20 {
+        if isPrime(testNumbers) {
+            println(testNumbers + " is prime");
+        }
+        testNumbers = testNumbers + 1;
+    }
+    
+    // 4. Function composition
+    println("\n=== FUNCTION COMPOSITION ===");
+    let base: Int = 2;
+    let exp: Int = 4;
+    let powerResult: Int = power(base, exp);
+    let factorialOfPower: Int = factorial(powerResult);
+    println("factorial(power(2, 4)) = factorial(16) = " + factorialOfPower);
+    
+    return 0;
+}

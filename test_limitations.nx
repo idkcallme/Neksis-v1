@@ -1,0 +1,7 @@
+// Testing limitations - string concatenation
+fn main() -> Int {
+    let name: String = "Alice";
+    let greeting: String = "Hello " + name;  // This might fail
+    println(greeting);
+    return 0;
+}

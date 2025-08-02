@@ -8,7 +8,6 @@ pub struct CodeFormatter {
     indent_size: usize,
     max_line_length: usize,
     use_spaces: bool,
-    trailing_comma: bool,
 }
 
 impl CodeFormatter {
@@ -17,7 +16,6 @@ impl CodeFormatter {
             indent_size: 4,
             max_line_length: 100,
             use_spaces: true,
-            trailing_comma: true,
         }
     }
 

@@ -1,0 +1,25 @@
+fn test_scope(x: Int) -> Int {
+    let local_var: Int = 100;
+    println("Inside function - local_var =");
+    println(local_var);
+    println("Inside function - parameter x =");
+    println(x);
+    return local_var + x;
+}
+
+fn main() -> Int {
+    println("Testing variable scoping...");
+    
+    let global_var: Int = 50;
+    println("In main - global_var =");
+    println(global_var);
+    
+    let result: Int = test_scope(25);
+    println("Function returned:");
+    println(result);
+    
+    println("Back in main - global_var still =");
+    println(global_var);
+    
+    return 0;
+}

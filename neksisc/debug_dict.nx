@@ -1,0 +1,17 @@
+println("Testing dict operations step by step");
+
+let dict = dict_new();
+println("1. Created dict");
+
+dict = dict_set(dict, "name", "Neksis");
+println("2. Set name");
+
+let name = dict_get(dict, "name");
+println("3. Got name - checking type");
+println(typeof(name));
+
+if typeof(name) == "string" {
+    println("Name is a string: " + name);
+} else {
+    println("Name is not a string");
+};

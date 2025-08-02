@@ -1,0 +1,13 @@
+fn main() -> Int {
+    println("Testing modulo operator...");
+    
+    let result1: Int = 10 % 3;
+    println("10 % 3 =");
+    println(result1);
+    
+    let result2: Int = 15 % 4;
+    println("15 % 4 =");
+    println(result2);
+    
+    return 0;
+}

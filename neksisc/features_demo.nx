@@ -1,0 +1,20 @@
+println("Advanced Features Demo");
+
+let dict = dict_set(dict_new(), "lang", "Neksis");
+dict = dict_set(dict, "year", "2024");
+println("Dictionary:");
+println(dict);
+
+let lang = dict_get(dict, "lang");
+println("Language: " + lang);
+
+let arr = array_push([1, 2, 3], 4);
+println("Array after push: " + typeof(arr));
+
+let sorted = array_sort([3, 1, 2]);
+println("Sorted array: " + typeof(sorted));
+
+let json = json_stringify(dict);
+println("JSON: " + json);
+
+println("Demo complete!");

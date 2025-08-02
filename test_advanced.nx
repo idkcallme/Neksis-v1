@@ -1,0 +1,49 @@
+// Testing mathematical and complex operations
+fn calculate_area(length: Int, width: Int) -> Int {
+    let area: Int = length * width;
+    return area;
+}
+
+fn fibonacci(n: Int) -> Int {
+    if n <= 1 {
+        return n;
+    } else {
+        let prev1: Int = fibonacci(n - 1);
+        let prev2: Int = fibonacci(n - 2);
+        let result: Int = prev1 + prev2;
+        return result;
+    }
+}
+
+fn main() -> Int {
+    println("Testing mathematical operations:");
+    
+    // Test area calculation
+    let room_area: Int = calculate_area(10, 12);
+    println("Room area (10 x 12):");
+    println(room_area);
+    
+    // Test recursive function (small values to avoid stack overflow)
+    println("Fibonacci numbers:");
+    let fib_0: Int = fibonacci(0);
+    let fib_1: Int = fibonacci(1);
+    let fib_2: Int = fibonacci(2);
+    let fib_3: Int = fibonacci(3);
+    let fib_4: Int = fibonacci(4);
+    let fib_5: Int = fibonacci(5);
+    
+    println("F(0):");
+    println(fib_0);
+    println("F(1):");
+    println(fib_1);
+    println("F(2):");
+    println(fib_2);
+    println("F(3):");
+    println(fib_3);
+    println("F(4):");
+    println(fib_4);
+    println("F(5):");
+    println(fib_5);
+    
+    return 0;
+}

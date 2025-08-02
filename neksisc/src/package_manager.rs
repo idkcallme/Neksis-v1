@@ -20,7 +20,6 @@ pub struct PackageManifest {
 #[derive(Debug)]
 pub struct PackageManager {
     registry_url: String,
-    cache_dir: PathBuf,
     packages_dir: PathBuf,
 }
 
@@ -29,23 +28,25 @@ impl PackageManager {
         let home_dir = dirs::home_dir()
             .ok_or_else(|| CompilerError::runtime_error("Could not determine home directory"))?;
         
-        let cache_dir = home_dir.join(".nexus").join("cache");
         let packages_dir = home_dir.join(".nexus").join("packages");
-        
-        fs::create_dir_all(&cache_dir)
-            .map_err(|e| CompilerError::runtime_error(&format!("Failed to create cache directory: {}", e)))?;
         
         fs::create_dir_all(&packages_dir)
             .map_err(|e| CompilerError::runtime_error(&format!("Failed to create packages directory: {}", e)))?;
         
         Ok(Self {
             registry_url: "https://registry.nexus-lang.org".to_string(),
-            cache_dir,
             packages_dir,
         })
     }
 
     pub fn init_project(&self, project_name: &str) -> Result<(), CompilerError> {
+        // Create project directory
+        fs::create_dir_all(project_name)
+            .map_err(|e| CompilerError::runtime_error(&format!("Failed to create project directory: {}", e)))?;
+        
+        // Change to project directory
+        let project_path = Path::new(project_name);
+        
         let manifest = PackageManifest {
             name: project_name.to_string(),
             version: "0.1.0".to_string(),
@@ -61,11 +62,11 @@ impl PackageManager {
         let manifest_content = serde_json::to_string_pretty(&manifest)
             .map_err(|e| CompilerError::runtime_error(&format!("Failed to serialize manifest: {}", e)))?;
         
-        fs::write("nexus.json", manifest_content)
+        fs::write(project_path.join("nexus.json"), manifest_content)
             .map_err(|e| CompilerError::runtime_error(&format!("Failed to write manifest: {}", e)))?;
         
         // Create basic project structure
-        fs::create_dir_all("src")
+        fs::create_dir_all(project_path.join("src"))
             .map_err(|e| CompilerError::runtime_error(&format!("Failed to create src directory: {}", e)))?;
         
         let main_content = r#"fn main() {
@@ -73,8 +74,13 @@ impl PackageManager {
 }
 "#;
         
-        fs::write("src/main.nx", main_content)
+        fs::write(project_path.join("src/main.nx"), main_content)
             .map_err(|e| CompilerError::runtime_error(&format!("Failed to create main.nx: {}", e)))?;
+        
+        // Create README.md
+        let readme_content = format!("# {}\n\nA neksis project.\n\n## Getting Started\n\n```bash\nneksis run\n```\n", project_name);
+        fs::write(project_path.join("README.md"), readme_content)
+            .map_err(|e| CompilerError::runtime_error(&format!("Failed to create README.md: {}", e)))?;
         
         Ok(())
     }

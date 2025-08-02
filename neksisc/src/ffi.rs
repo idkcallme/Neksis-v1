@@ -3,7 +3,7 @@ use std::os::raw::{c_void, c_char};
 use std::collections::HashMap;
 use crate::ast::Type;
 use crate::error::CompilerError;
-use pyo3::IntoPy;
+
 
 #[derive(Debug)]
 pub struct FFILibrary {
@@ -418,30 +418,7 @@ impl PythonInterop {
         Err(CompilerError::ffi_error("Python", "Python interop not yet implemented"))
     }
 
-    fn convert_to_python_args(&self, py: pyo3::Python, args: Vec<FFIValue>) -> Result<pyo3::PyObject, CompilerError> {
-        // Convert Neksis values to Python objects
-        let py_args: Vec<pyo3::PyObject> = args.into_iter()
-            .map(|arg| self.convert_to_python_value(py, arg))
-            .collect::<Result<Vec<_>, _>>()?;
 
-        Ok(pyo3::types::PyTuple::new(py, py_args).into())
-    }
-
-    fn convert_to_python_value(&self, py: pyo3::Python, value: FFIValue) -> Result<pyo3::PyObject, CompilerError> {
-        match value {
-            FFIValue::Int32(v) => Ok(v.into_py(py)),
-            FFIValue::Float64(v) => Ok(v.into_py(py)),
-            FFIValue::Bool(v) => Ok(v.into_py(py)),
-            FFIValue::String(v) => Ok(v.into_py(py)),
-            _ => Err(CompilerError::ffi_error("python", "Unsupported type for Python conversion")),
-        }
-    }
-
-    fn convert_from_python_value(&self, _value: pyo3::PyObject) -> Result<FFIValue, CompilerError> {
-        // Simplified conversion - in a real implementation, you'd handle more types
-        // For now, return a placeholder to avoid lifetime issues
-        Ok(FFIValue::Void) // Default to Void if unknown type
-    }
 }
 
 // Rust interop support

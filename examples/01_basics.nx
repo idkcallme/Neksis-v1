@@ -1,0 +1,53 @@
+// Neksis Tutorial: Basic Syntax and Variables
+// Run with: neksis examples/01_basics.nx
+
+fn main() -> Int {
+    println("=== NEKSIS BASICS TUTORIAL ===");
+    
+    // 1. Variable declarations with explicit types
+    let name: String = "Neksis";
+    let version: Int = 1;
+    let pi: Float = 3.14159;
+    let isRunning: Bool = true;
+    
+    println("Language: " + name);
+    println("Version: " + version);
+    println("Pi: " + pi);
+    println("Running: " + isRunning);
+    
+    // 2. Arithmetic operations
+    let a: Int = 10;
+    let b: Int = 3;
+    
+    println("\n=== ARITHMETIC ===");
+    println("a = " + a + ", b = " + b);
+    println("Addition: " + (a + b));
+    println("Subtraction: " + (a - b));
+    println("Multiplication: " + (a * b));
+    println("Division: " + (a / b));
+    println("Modulo: " + (a % b));
+    
+    // 3. String operations
+    println("\n=== STRINGS ===");
+    let greeting: String = "Hello";
+    let target: String = "World";
+    let message: String = greeting + ", " + target + "!";
+    println(message);
+    
+    // 4. Boolean operations
+    println("\n=== BOOLEANS ===");
+    let x: Bool = true;
+    let y: Bool = false;
+    println("x: " + x);
+    println("y: " + y);
+    
+    // Boolean comparisons
+    let isEqual: Bool = (5 == 5);
+    let isNotEqual: Bool = (5 != 3);
+    let isGreater: Bool = (10 > 5);
+    println("5 == 5: " + isEqual);
+    println("5 != 3: " + isNotEqual);
+    println("10 > 5: " + isGreater);
+    
+    return 0;
+}

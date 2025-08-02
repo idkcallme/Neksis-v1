@@ -1,0 +1,3 @@
+println("Testing dict_new");
+let dict = dict_new();
+println("Dict created: " + typeof(dict));

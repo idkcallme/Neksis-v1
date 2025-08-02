@@ -32,7 +32,6 @@ pub struct BorrowChecker {
     variables: HashMap<String, VariableState>,
     current_scope: usize,
     scopes: Vec<HashMap<String, VariableState>>,
-    lifetime_counter: usize,
 }
 
 impl BorrowChecker {
@@ -41,7 +40,6 @@ impl BorrowChecker {
             variables: HashMap::new(),
             current_scope: 0,
             scopes: vec![HashMap::new()],
-            lifetime_counter: 0,
         }
     }
 
@@ -166,6 +164,7 @@ impl BorrowChecker {
                     ));
                 }
             }
+
             Expression::BinaryExpression { left, operator: _, right } => {
                 self.check_expression(left)?;
                 self.check_expression(right)?;
@@ -280,10 +279,7 @@ impl BorrowChecker {
         }
     }
 
-    fn generate_lifetime(&mut self) -> String {
-        self.lifetime_counter += 1;
-        format!("'lifetime_{}", self.lifetime_counter)
-    }
+
 
     fn is_builtin_function(&self, name: &str) -> bool {
         matches!(name, "print" | "println" | "read_line" | "len" | "concat")

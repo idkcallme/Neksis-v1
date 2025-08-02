@@ -7,8 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("========================================");
     
     // Read the comprehensive test file
-    let test_content = fs::read_to_string("../working_comprehensive_test.nx")
-        .expect("Failed to read working_comprehensive_test.nx");
+    let test_content = fs::read_to_string("../simple_gguf_test.nx")
+        .expect("Failed to read simple_gguf_test.nx");
     
     println!("Test file loaded successfully!");
     println!("File size: {} bytes", test_content.len());

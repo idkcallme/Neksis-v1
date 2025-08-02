@@ -1,0 +1,5 @@
+Neksis Language Test Results
+- Basic I/O: PASSED
+- Math Operations: PASSED
+- String Operations: PASSED
+- File Operations: PASSED

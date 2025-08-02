@@ -1,0 +1,15 @@
+fn test_func(first: Int, second: Int) -> Int {
+    println("first parameter:");
+    println(first);
+    println("second parameter:");
+    println(second);
+    return first * 10 + second;
+}
+
+fn main() -> Int {
+    println("Calling test_func(1, 2)");
+    let result: Int = test_func(1, 2);
+    println("Result should be 12:");
+    println(result);
+    return 0;
+}

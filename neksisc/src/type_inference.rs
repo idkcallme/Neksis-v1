@@ -1,10 +1,9 @@
-use crate::ast::{Expression, Statement, Type, Literal, BinaryOperator, UnaryOperator};
+use crate::ast::{Expression, Statement, Type, Literal, UnaryOperator, BinaryOp};
 use crate::error::CompilerError;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 pub struct TypeContext {
-    variables: HashMap<String, Type>,
     functions: HashMap<String, Type>,
     current_scope: usize,
     scopes: Vec<HashMap<String, Type>>,
@@ -13,7 +12,6 @@ pub struct TypeContext {
 impl TypeContext {
     pub fn new() -> Self {
         Self {
-            variables: HashMap::new(),
             functions: HashMap::new(),
             current_scope: 0,
             scopes: vec![HashMap::new()],
@@ -172,40 +170,15 @@ impl TypeInferrer {
                 self.context.get_variable_type(name)
                     .ok_or_else(|| CompilerError::type_error(&format!("Undefined variable: {}", name)))
             }
+
             Expression::BinaryExpression { left, operator, right } => {
-                let left_type = self.infer_expression(left)?;
-                let right_type = self.infer_expression(right)?;
-                
-                match operator {
-                    BinaryOperator::Add | BinaryOperator::Sub | BinaryOperator::Mul | BinaryOperator::Div => {
-                        if left_type == Type::Int && right_type == Type::Int {
-                            Ok(Type::Int)
-                        } else if (left_type == Type::Int || left_type == Type::Float) && 
-                                  (right_type == Type::Int || right_type == Type::Float) {
-                            Ok(Type::Float)
-                        } else if left_type == Type::String || right_type == Type::String {
-                            Ok(Type::String)
-                        } else {
-                            Err(CompilerError::type_error("Invalid operands for arithmetic operation"))
-                        }
-                    }
-                    BinaryOperator::Eq | BinaryOperator::Ne | BinaryOperator::Lt | 
-                    BinaryOperator::Le | BinaryOperator::Gt | BinaryOperator::Ge => {
-                        if self.types_compatible(&left_type, &right_type) {
-                            Ok(Type::Bool)
-                        } else {
-                            Err(CompilerError::type_error("Cannot compare incompatible types"))
-                        }
-                    }
-                    BinaryOperator::And | BinaryOperator::Or => {
-                        if left_type == Type::Bool && right_type == Type::Bool {
-                            Ok(Type::Bool)
-                        } else {
-                            Err(CompilerError::type_error("Logical operators require boolean operands"))
-                        }
-                    }
-                    _ => Ok(Type::Unknown),
-                }
+                // Delegate to BinaryOp handling by creating a temporary BinaryOp
+                let bin_op = BinaryOp {
+                    left: left.clone(),
+                    operator: operator.clone(),
+                    right: right.clone(),
+                };
+                self.infer_expression(&Expression::BinaryOp(bin_op))
             }
             Expression::UnaryExpression { operator, operand } => {
                 let operand_type = self.infer_expression(operand)?;

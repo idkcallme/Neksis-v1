@@ -1,0 +1,23 @@
+// Testing real working operators based on examples
+fn main() -> Int {
+    println("Testing working operators:");
+    
+    let a: Int = 5;
+    let b: Int = 10;
+    
+    // Test >= operator (confirmed working)
+    if a >= 5 {
+        println("Greater than or equal (>=) works");
+    }
+    
+    // Test <= operator (confirmed working)
+    if b <= 10 {
+        println("Less than or equal (<=) works");
+    }
+    
+    // Test string concatenation with integers (confirmed working)
+    println("Value of a: " + a);
+    println("Value of b: " + b);
+    
+    return 0;
+}

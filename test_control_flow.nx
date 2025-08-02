@@ -1,0 +1,21 @@
+fn main() -> Int {
+    let x: Int = 10;
+    
+    // If-else statements
+    if x > 5 {
+        println("x is greater than 5");
+    } else {
+        println("x is 5 or less");
+    }
+    
+    // While loops
+    let i: Int = 0;
+    while i < 5 {
+        print("Count: ");
+        println(i);
+        let next_i: Int = i + 1;
+        i = next_i;
+    }
+    
+    return 0;
+}

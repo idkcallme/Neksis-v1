@@ -1,0 +1,15 @@
+// Testing string operations and limitations
+fn main() -> Int {
+    // Test basic string printing
+    println("Testing string operations:");
+    
+    // Test what works with strings
+    println("Hello");
+    println("World");
+    
+    // Test if we can print strings separately
+    print("This is ");
+    println("a test");
+    
+    return 0;
+}

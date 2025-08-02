@@ -1,0 +1,29 @@
+// Testing function definitions and calls
+fn add_numbers(a: Int, b: Int) -> Int {
+    let result: Int = a + b;
+    return result;
+}
+
+fn multiply(x: Int, y: Int) -> Int {
+    let product: Int = x * y;
+    return product;
+}
+
+fn main() -> Int {
+    println("Testing functions:");
+    
+    let sum: Int = add_numbers(10, 20);
+    println("10 + 20 =");
+    println(sum);
+    
+    let product: Int = multiply(6, 7);
+    println("6 * 7 =");
+    println(product);
+    
+    // Test nested function calls
+    let nested_result: Int = add_numbers(multiply(3, 4), 5);
+    println("(3 * 4) + 5 =");
+    println(nested_result);
+    
+    return 0;
+}

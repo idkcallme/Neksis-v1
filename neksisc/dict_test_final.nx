@@ -1,0 +1,21 @@
+println("Testing correct dict usage");
+
+let dict = dict_new();
+println("Initial:");
+println(dict);
+
+dict = dict_set(dict, "name", "Neksis");
+println("After setting name:");
+println(dict);
+
+let name = dict_get(dict, "name");
+println("Retrieved name:");
+println(name);
+
+let has_name = dict_has(dict, "name");
+println("Has name:");
+println(has_name);
+
+let size = dict_size(dict);
+println("Size:");
+println(size);

@@ -1,0 +1,27 @@
+fn main() -> Int {
+    println("Testing loops and conditionals...");
+    
+    println("--- For Loop Test ---");
+    let i: Int = 1;
+    while i <= 5 {
+        println(i);
+        i = i + 1;
+    }
+    
+    println("--- FizzBuzz Test ---");
+    let num: Int = 1;
+    while num <= 10 {
+        if num % 15 == 0 {
+            println("FizzBuzz");
+        } else if num % 3 == 0 {
+            println("Fizz");
+        } else if num % 5 == 0 {
+            println("Buzz");
+        } else {
+            println(num);
+        }
+        num = num + 1;
+    }
+    
+    return 0;
+}

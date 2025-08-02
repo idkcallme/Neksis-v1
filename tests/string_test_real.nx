@@ -1,0 +1,15 @@
+fn main() -> Int {
+    println("Testing string operations...");
+    
+    let greeting: String = "Hello";
+    let name: String = "World";
+    
+    println("String concatenation test:");
+    println(greeting + " " + name + "!");
+    
+    let number: Int = 42;
+    println("String + number:");
+    println("The answer is " + number);
+    
+    return 0;
+}

@@ -1,0 +1,66 @@
+// Phase 2: Recursive Functions Test (Fixed)
+fn fibonacci(n: Int) -> Int {
+    if n <= 1 {
+        return n;
+    } else {
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
+
+fn is_prime(num: Int) -> Bool {
+    if num <= 1 {
+        return false;
+    }
+    if num <= 3 {
+        return true;
+    }
+    if num % 2 == 0 || num % 3 == 0 {
+        return false;
+    }
+    let i: Int = 5;
+    while i * i <= num {
+        if num % i == 0 || num % (i + 2) == 0 {
+            return false;
+        }
+        i = i + 6;
+    }
+    return true;
+}
+
+fn power(base: Int, exp: Int) -> Int {
+    if exp == 0 {
+        return 1;
+    }
+    return base * power(base, exp - 1);
+}
+
+fn main() -> Int {
+    println("🔥 PHASE 2: RECURSIVE FUNCTIONS TEST 🔥");
+    println("==========================================");
+    
+    println("--- Fibonacci Sequence ---");
+    println("fibonacci(0) =");
+    println(fibonacci(0));
+    println("fibonacci(5) =");
+    println(fibonacci(5));
+    println("fibonacci(8) =");
+    println(fibonacci(8));
+    
+    println("--- Power Function ---");
+    println("power(2, 5) =");
+    println(power(2, 5));
+    println("power(3, 4) =");
+    println(power(3, 4));
+    
+    println("--- Prime Testing ---");
+    let test_num: Int = 17;
+    println("is_prime(17) =");
+    println(is_prime(test_num));
+    
+    test_num = 18;
+    println("is_prime(18) =");
+    println(is_prime(test_num));
+    
+    println("🎉 PHASE 2 COMPLETE!");
+    return 0;
+}

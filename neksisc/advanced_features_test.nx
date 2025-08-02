@@ -1,0 +1,62 @@
+// Test Advanced Features (Nice-to-Have)
+println("=== Testing Advanced Data Structures ===");
+
+// Test Dictionary functions
+let dict = dict_new();
+println("Created dictionary");
+
+// Test dictionary operations
+dict = dict_set(dict, "name", "Neksis");
+dict = dict_set(dict, "version", "1.0");
+dict = dict_set(dict, "year", 2024);
+
+println("Dictionary after setting values:");
+let name = dict_get(dict, "name");
+println("name: " + name);
+
+let has_name = dict_has(dict, "name");
+println("has name: " + typeof(has_name));
+
+let dict_size = dict_size(dict);
+println("dictionary size: " + typeof(dict_size));
+
+let keys = dict_keys(dict);
+println("dictionary keys type: " + typeof(keys));
+
+println("=== Testing Advanced Array Functions ===");
+
+// Test array functions
+let arr = [5, 2, 8, 1, 9];
+println("Original array: " + typeof(arr));
+
+arr = array_push(arr, 42);
+println("After push: " + typeof(arr));
+
+let popped = array_pop(arr);
+println("Popped value type: " + typeof(popped));
+
+arr = array_reverse([1, 2, 3, 4, 5]);
+println("Reversed array type: " + typeof(arr));
+
+arr = array_sort([5, 2, 8, 1, 9]);
+println("Sorted array type: " + typeof(arr));
+
+let sliced = array_slice([1, 2, 3, 4, 5], 1, 4);
+println("Sliced array type: " + typeof(sliced));
+
+println("=== Testing JSON Support ===");
+
+// Test JSON functions
+let json_obj = json_parse("{\"test\": \"value\"}");
+println("Parsed JSON type: " + typeof(json_obj));
+
+let json_str = json_stringify(dict);
+println("JSON string type: " + typeof(json_str));
+
+println("=== Testing Error Handling ===");
+
+// Test error handling
+let result = try_catch("safe code", "error handler");
+println("Try-catch result type: " + typeof(result));
+
+println("=== Advanced Features Test Complete ===");

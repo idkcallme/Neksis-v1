@@ -29,15 +29,10 @@ impl CLI {
         let command = &args[1];
         
         // Check for version and help flags first
-        if command.starts_with("-") || command == "help" || command == "version" {
-            match command.as_str() {
-                "help" | "--help" | "-h" => return self.show_help(),
-                "version" | "--version" | "-v" => return self.show_version(),
-                _ => {
-                    // If it starts with - but isn't a recognized flag, show help
-                    return self.show_help();
-                }
-            }
+        match command.as_str() {
+            "help" | "--help" | "-h" => return self.show_help(),
+            "version" | "--version" | "-v" => return self.show_version(),
+            _ => {}
         }
 
         // Handle subcommands

@@ -1,0 +1,17 @@
+// Testing what comparison operators work
+fn main() -> Int {
+    let a: Int = 5;
+    let b: Int = 10;
+    
+    println("Testing simple comparisons:");
+    println("a = 5, b = 10");
+    
+    // Try equality first
+    if a == b {
+        println("a equals b");
+    } else {
+        println("a does not equal b");
+    }
+    
+    return 0;
+}

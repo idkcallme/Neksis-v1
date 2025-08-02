@@ -1,23 +1,63 @@
-# Neksis Examples
+# Neksis Language Examples
 
-This directory contains example programs demonstrating various features of the Neksis programming language.
+This directory contains educational examples and demonstrations of the Neksis programming language capabilities.
 
-## Example Files
+## Educational Tutorial Series
 
-### **Basic Examples**
-- **`hello_world.nx`** - Classic "Hello, World!" program
-- **`demo.nx`** - Simple demonstration of basic syntax
-- **`simple_test.nx`** - Basic variable assignment and printing
+### 1. **01_basics.nx** - Language Fundamentals
+- Variable declarations and types
+- Basic arithmetic operations  
+- String manipulation
+- Boolean operations and comparisons
+- **Run with**: `neksis examples/01_basics.nx`
 
-### **Comprehensive Tests**
-- **`final_comprehensive_test.nx`** - Complete feature demonstration including:
-  - Basic literals and variables
-  - Arithmetic operations
-  - String operations
-  - Boolean operations
-  - If expressions
-  - Block expressions
-  - Nested scopes
+### 2. **02_control_flow.nx** - Control Structures
+- If/else conditional statements
+- While loops and iteration
+- Complex conditional logic
+- FizzBuzz algorithm implementation
+- **Run with**: `neksis examples/02_control_flow.nx`
+
+### 3. **03_functions.nx** - Functions and Recursion
+- Function definitions and calls
+- Parameter passing and return values
+- Recursive algorithms (factorial, fibonacci)
+- Mathematical functions and prime checking
+- **Run with**: `neksis examples/03_functions.nx`
+
+### 4. **04_algorithms.nx** - Advanced Algorithms
+- Sorting algorithms (bubble sort)
+- Search algorithms (binary search)
+- Mathematical algorithms (GCD, LCM, Collatz)
+- Number theory functions
+- **Run with**: `neksis examples/04_algorithms.nx`
+
+## Demonstration Programs
+
+### **hello_world.nx** - Classic Hello World
+Simple "Hello, World!" program demonstrating basic output.
+- **Run with**: `neksis examples/hello_world.nx`
+
+### **demo.nx** - Language Features Demo
+Comprehensive demonstration of various language capabilities.
+- **Run with**: `neksis examples/demo.nx`
+
+### **networking_simulation.nx** - Network Programming Concepts
+Shows how Neksis can handle networking-related logic:
+- URL construction and manipulation
+- HTTP status code processing
+- Network metrics calculation
+- Connection management simulation
+- Protocol state machines
+- **Run with**: `neksis examples/networking_simulation.nx`
+
+### **io_demo.nx** - Input/Output Examples
+Demonstrates file and console I/O capabilities.
+- **Run with**: `neksis examples/io_demo.nx`
+
+### **main_demo.nx** - Main Function Examples
+Various examples of main function implementations.
+- **Run with**: `neksis examples/main_demo.nx`
   - Function calls
   - Type conversions
   - Error handling

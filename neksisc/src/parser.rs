@@ -87,6 +87,8 @@ impl Parser {
         }
     }
     
+    // Error recovery method - currently unused but kept for future error handling
+    #[allow(dead_code)]
     fn synchronize(&mut self) {
         self.advance();
         
@@ -106,7 +108,8 @@ impl Parser {
         }
     }
     
-    // Parse Annotations
+    // Parse Annotations - currently unused but kept for future annotation support
+    #[allow(dead_code)]
     fn parse_annotation(&mut self) -> Result<Annotation, String> {
         let _start_line = self.previous().line;
         let _start_column = self.previous().column;
@@ -229,6 +232,8 @@ impl Parser {
             return Ok(Some(Statement::Module(self.parse_module_statement()?)));
         } else if self.match_token(&Token::If) {
             return Ok(Some(Statement::Expression(self.parse_if_expression()?)));
+        } else if self.match_token(&Token::While) {
+            return Ok(Some(Statement::Expression(self.parse_while_expression()?)));
         } else if self.match_token(&Token::Move) {
             return Ok(Some(Statement::Move(self.parse_move_statement()?)));
         } else if self.match_token(&Token::Drop) {
@@ -253,6 +258,16 @@ impl Parser {
             Ok(Expression::Block(_)) => {
                 // Block statements do not require a semicolon
                 Ok(Some(Statement::Expression(expr.unwrap())))
+            },
+            Ok(Expression::Assignment(assign_expr)) => {
+                // Convert assignment expression to assignment statement
+                if !self.match_token(&Token::Semicolon) {
+                    return Err("Expected ';' after assignment".to_string());
+                }
+                Ok(Some(Statement::AssignmentStatement {
+                    name: assign_expr.target.clone(),
+                    value: assign_expr.value.clone(),
+                }))
             },
             Ok(expr) => {
                 // Non-block expressions require a semicolon
@@ -929,11 +944,15 @@ impl Parser {
         
         if self.match_token(&Token::Equal) {
             let value = self.parse_assignment()?;
-            return Ok(Expression::BinaryOp(BinaryOp {
-                left: Box::new(expr),
-                operator: BinaryOperator::Equal,
-                right: Box::new(value),
-            }));
+            // Check if the left side is an identifier for assignment
+            if let Expression::Identifier(name) = expr {
+                return Ok(Expression::Assignment(crate::ast::AssignmentStatement {
+                    target: name,
+                    value: Box::new(value),
+                }));
+            } else {
+                return Err("Invalid assignment target".to_string());
+            }
         }
         
         Ok(expr)
@@ -942,7 +961,7 @@ impl Parser {
     fn parse_or(&mut self) -> Result<Expression, String> {
         let mut expr = self.parse_and()?;
         
-        while self.match_token(&Token::Or) {
+        while self.match_token(&Token::Or) || self.match_token(&Token::PipePipe) {
             if self.check(&Token::LeftBrace) {
                 // Don't consume LeftBrace as part of a binary expression
                 break;
@@ -1393,7 +1412,12 @@ impl Parser {
         } else if self.match_token(&Token::Match) {
             self.parse_match_expression()
         } else if self.match_token(&Token::Try) {
-            self.parse_try_expression()
+            // Check if this is try-catch or just try
+            if self.check(&Token::Catch) {
+                self.parse_try_catch_expression()
+            } else {
+                self.parse_try_expression()
+            }
         } else if self.match_token(&Token::Spawn) {
             self.parse_spawn_expression()
         } else if self.match_token(&Token::Join) {
@@ -1484,13 +1508,14 @@ impl Parser {
                 self.advance();
                 return Ok(Expression::Literal(Literal::Array(vec![])));
             } else {
-                // Fallback to array literal
+                // Use the dedicated list literal parser
+                // We already have the first expression in 'expr', so we need to handle this specially
                 let mut elements = vec![expr];
                 while self.match_token(&Token::Comma) {
                     if self.check(&Token::RightBracket) { break; }
                     elements.push(self.parse_expression()?);
                 }
-                self.consume(&Token::RightBrace, "Expected '}' after array literal")?;
+                self.consume(&Token::RightBracket, "Expected ']' after array literal")?;
                 let mut literals = Vec::new();
                 for element in elements {
                     if let Expression::Literal(literal) = element {
@@ -1600,6 +1625,7 @@ impl Parser {
         }
     }
 
+    // Try-catch expression parser - integrated into parse_primary
     fn parse_try_catch_expression(&mut self) -> Result<Expression, String> {
         let try_block = if self.match_token(&Token::LeftBrace) {
             // Block expression
@@ -1667,16 +1693,23 @@ impl Parser {
         self.parse_block()
     }
     
+    // List literal parser - currently unused but kept for future use
+    #[allow(dead_code)]
     fn parse_list_literal(&mut self) -> Result<Expression, String> {
         let mut elements = Vec::new();
         
+        // If we're called from parse_primary, we might already have parsed the first expression
+        // Check if we're at a comma or right bracket
         if !self.check(&Token::RightBracket) {
-            loop {
+            if !self.check(&Token::Comma) {
+                // We haven't parsed the first element yet
                 elements.push(self.parse_expression()?);
-                
-                if !self.match_token(&Token::Comma) {
-                    break;
-                }
+            }
+            
+            // Parse remaining elements
+            while self.match_token(&Token::Comma) {
+                if self.check(&Token::RightBracket) { break; }
+                elements.push(self.parse_expression()?);
             }
         }
         
@@ -1694,6 +1727,8 @@ impl Parser {
         Ok(Expression::Literal(Literal::Array(literals)))
     }
     
+    // Map literal parser - currently unused but kept for future use
+    #[allow(dead_code)]
     fn parse_map_literal(&mut self) -> Result<Expression, String> {
         let mut map = std::collections::HashMap::new();
         
@@ -2174,19 +2209,31 @@ impl Parser {
     }
 
     pub fn parse_member_access(&mut self, mut expr: Expression) -> Result<Expression, String> {
-        while self.match_token(&Token::Dot) {
-            let member = if let Token::Identifier(name) = &self.peek() {
-                let name = name.clone();
-                self.advance();
-                name
-            } else {
-                return Err("Expected member name after '.'".to_string());
-            };
+        loop {
+            if self.match_token(&Token::Dot) {
+                let member = if let Token::Identifier(name) = &self.peek() {
+                    let name = name.clone();
+                    self.advance();
+                    name
+                } else {
+                    return Err("Expected member name after '.'".to_string());
+                };
 
-            expr = Expression::MemberAccess(MemberAccessExpression {
-                object: Box::new(expr),
-                member,
-            });
+                expr = Expression::MemberAccess(MemberAccessExpression {
+                    object: Box::new(expr),
+                    member,
+                });
+            } else if self.match_token(&Token::LeftBracket) {
+                let index = self.parse_expression()?;
+                self.consume(&Token::RightBracket, "Expected ']' after array index")?;
+                
+                expr = Expression::ArrayAccess(ArrayAccessExpression {
+                    array: Box::new(expr),
+                    index: Box::new(index),
+                });
+            } else {
+                break;
+            }
         }
         Ok(expr)
     }
@@ -2338,6 +2385,8 @@ impl Parser {
         }))
     }
     
+    // Array literal parser - currently unused but kept for future use
+    #[allow(dead_code)]
     fn parse_array_literal(&mut self) -> Result<Expression, String> {
         self.parse_list_literal()
     }

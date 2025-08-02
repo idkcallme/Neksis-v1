@@ -1,0 +1,36 @@
+fn celsius_to_fahrenheit(celsius: Int) -> Int {
+    let fahrenheit: Int = celsius * 9 / 5 + 32;
+    return fahrenheit;
+}
+
+fn fahrenheit_to_celsius(fahrenheit: Int) -> Int {
+    let celsius: Int = (fahrenheit - 32) * 5 / 9;
+    return celsius;
+}
+
+fn temperature_converter() -> Int {
+    println("=== Temperature Converter ===");
+    
+    let temp_c: Int = 25;
+    let temp_f: Int = celsius_to_fahrenheit(temp_c);
+    
+    print(temp_c);
+    print("°C = ");
+    print(temp_f);
+    println("°F");
+    
+    let temp_f2: Int = 77;
+    let temp_c2: Int = fahrenheit_to_celsius(temp_f2);
+    
+    print(temp_f2);
+    print("°F = ");
+    print(temp_c2);
+    println("°C");
+    
+    return temp_f;
+}
+
+fn main() -> Int {
+    temperature_converter();
+    return 0;
+}

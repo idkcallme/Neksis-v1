@@ -1,0 +1,27 @@
+// Testing boolean operations - simplified
+fn main() -> Int {
+    println("Testing boolean operations:");
+    
+    let a: Int = 5;
+    let b: Int = 10;
+    
+    if a < b {
+        println("5 is less than 10");
+    }
+    
+    if a > b {
+        println("This should not print");
+    } else {
+        println("5 is not greater than 10");
+    }
+    
+    // Test equality
+    let x: Int = 7;
+    let y: Int = 7;
+    
+    if x == y {
+        println("Equality comparison works");
+    }
+    
+    return 0;
+}

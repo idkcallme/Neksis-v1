@@ -1,0 +1,9 @@
+println("Testing without reassignment");
+
+let dict = dict_set(dict_new(), "name", "Neksis");
+println("Dict with name:");
+println(dict);
+
+let name = dict_get(dict, "name");
+println("Retrieved name:");
+println(name);

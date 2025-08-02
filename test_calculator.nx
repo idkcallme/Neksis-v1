@@ -1,0 +1,51 @@
+fn calculator() -> Int {
+    let a: Int = 45;
+    let b: Int = 15;
+    
+    println("=== Simple Calculator ===");
+    print("First number: ");
+    println(a);
+    print("Second number: ");
+    println(b);
+    println("");
+    
+    let sum: Int = a + b;
+    let difference: Int = a - b;
+    let product: Int = a * b;
+    let quotient: Int = a / b;
+    
+    print("Addition: ");
+    print(a);
+    print(" + ");
+    print(b);
+    print(" = ");
+    println(sum);
+    
+    print("Subtraction: ");
+    print(a);
+    print(" - ");
+    print(b);
+    print(" = ");
+    println(difference);
+    
+    print("Multiplication: ");
+    print(a);
+    print(" * ");
+    print(b);
+    print(" = ");
+    println(product);
+    
+    print("Division: ");
+    print(a);
+    print(" / ");
+    print(b);
+    print(" = ");
+    println(quotient);
+    
+    return sum;
+}
+
+fn main() -> Int {
+    calculator();
+    return 0;
+}

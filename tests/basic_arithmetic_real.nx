@@ -1,0 +1,20 @@
+fn main() -> Int {
+    println("Testing basic arithmetic...");
+    
+    let a: Int = 10;
+    let b: Int = 3;
+    
+    println("Addition: 10 + 3 =");
+    println(a + b);
+    
+    println("Subtraction: 10 - 3 =");
+    println(a - b);
+    
+    println("Multiplication: 10 * 3 =");
+    println(a * b);
+    
+    println("Division: 10 / 3 =");
+    println(a / b);
+    
+    return 0;
+}

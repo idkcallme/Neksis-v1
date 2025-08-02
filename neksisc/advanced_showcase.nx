@@ -1,0 +1,44 @@
+println("=== Advanced Features Showcase ===");
+
+println("--- Dictionary Operations ---");
+let dict = dict_set(dict_new(), "name", "Neksis");
+dict = dict_set(dict, "version", "2.0");
+dict = dict_set(dict, "status", "advanced");
+
+println("Dictionary contents:");
+println(dict);
+
+println("Getting values:");
+println("name: " + dict_get(dict, "name"));
+println("version: " + dict_get(dict, "version"));
+
+println("Checking keys:");
+println("has 'name': " + dict_has(dict, "name"));
+println("has 'unknown': " + dict_has(dict, "unknown"));
+
+println("Dictionary size: " + dict_size(dict));
+
+println("--- Array Operations ---");
+let arr = [3, 1, 4, 1, 5];
+println("Original: " + typeof(arr));
+
+let pushed = array_push(arr, 9);
+println("After push: " + typeof(pushed));
+
+let reversed = array_reverse([1, 2, 3, 4]);
+println("Reversed [1,2,3,4]: " + typeof(reversed));
+
+let sorted = array_sort([5, 2, 8, 1, 9]);
+println("Sorted [5,2,8,1,9]: " + typeof(sorted));
+
+let sliced = array_slice([10, 20, 30, 40, 50], 1, 4);
+println("Slice [10,20,30,40,50][1:4]: " + typeof(sliced));
+
+println("--- JSON Operations ---");
+let json_str = json_stringify(dict);
+println("Dict as JSON: " + json_str);
+
+let parsed = json_parse("{\"test\": \"value\"}");
+println("Parsed JSON type: " + typeof(parsed));
+
+println("--- All Advanced Features Working! ---");

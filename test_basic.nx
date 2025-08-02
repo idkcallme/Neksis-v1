@@ -1,0 +1,23 @@
+// Testing basic variable types and operations
+fn main() -> Int {
+    // Testing integer variables
+    let number: Int = 42;
+    println("Testing integer:");
+    println(number);
+    
+    // Testing basic arithmetic
+    let a: Int = 10;
+    let b: Int = 5;
+    let sum: Int = a + b;
+    let difference: Int = a - b;
+    let product: Int = a * b;
+    let quotient: Int = a / b;
+    
+    println("Arithmetic tests:");
+    println(sum);
+    println(difference);
+    println(product);
+    println(quotient);
+    
+    return 0;
+}

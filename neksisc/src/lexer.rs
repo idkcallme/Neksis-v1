@@ -146,16 +146,14 @@ pub struct Lexer<'a> {
     input: Peekable<Chars<'a>>,
     line: usize,
     column: usize,
-    current_file: String,
 }
 
 impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str, file: String) -> Self {
+    pub fn new(input: &'a str, _file: String) -> Self {
         Lexer {
             input: input.chars().peekable(),
             line: 1,
             column: 1,
-            current_file: file,
         }
     }
     
@@ -292,7 +290,7 @@ impl<'a> Lexer<'a> {
                     self.input.next();
                     Token::LessEqual
                 } else {
-                    Token::LeftAngle
+                    Token::Less
                 }
             }
             '>' => {

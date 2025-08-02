@@ -1,3 +1,4 @@
+// Modern Neksis 2025 Library
 pub mod ast;
 pub mod lexer;
 pub mod parser;
@@ -18,13 +19,47 @@ pub mod cli;
 pub mod formatter;
 pub mod linter;
 
-// Temporarily comment out problematic modules for core compilation
-// pub mod python_bridge;
-// pub mod wasm_bridge;
+// Modern 2025 modules
+pub mod modern_ast;
+pub mod modern_lexer;
+pub mod modern_parser;
+pub mod modern_stdlib;
+pub mod collections;
+pub mod networking;
+pub mod async_runtime;
+pub mod modern_async;
+
+// Object-Oriented Programming and Module System
+pub mod oop;
+pub mod module_system;
+
+// NEXUS CORE - Production-Ready Advanced Systems Programming Framework
+// Temporarily disabled due to compilation errors - need type definitions
+// pub mod nexus_rt;        // Real-time scheduling and deterministic memory
+// pub mod nexus_gpu;       // GPU acceleration and parallel computing
+// pub mod nexus_secure;    // Security, sandboxing, and cryptography
+// pub mod nexus_metal;     // Bare metal and embedded systems programming
+// pub mod nexus_ai;        // AI/ML integration and acceleration
+// pub mod nexus_production; // Complete production integration
+
+// NEXUS CORE - Next Generation Features
+// Temporarily disabled due to compilation errors - need type definitions
+// pub mod nexus_build;     // Self-compiling JIT system
+// pub mod nexus_stealth;   // Security enumeration and penetration testing
+// pub mod nexus_cold;      // Cold execution and state preservation
+// pub mod nexus_time;      // Temporal programming and time-travel debugging
+
+// Test modules
+pub mod test_oop_modules;
+
+// Integration modules temporarily disabled - will fix AST alignment later
+// pub mod error_handling;
+// pub mod modern_integration;
+
+// Advanced features
 pub mod type_inference;
 pub mod memory_profiler;
 pub mod borrow_checker;
-// pub mod wasm;
 pub mod macro_system;
 pub mod ffi;
 pub mod concurrency;

@@ -1,0 +1,37 @@
+fn test_large_numbers() -> Int {
+    println("Testing large number computations...");
+    
+    let big1: Int = 1000000;
+    let big2: Int = 999999;
+    
+    println("1000000 + 999999 =");
+    println(big1 + big2);
+    
+    println("1000000 - 999999 =");
+    println(big1 - big2);
+    
+    return 0;
+}
+
+fn test_deep_recursion(n: Int) -> Int {
+    if n <= 0 {
+        return 0;
+    }
+    return n + test_deep_recursion(n - 1);
+}
+
+fn main() -> Int {
+    println("🔬 NEKSIS REAL-WORLD CAPABILITY TEST 🔬");
+    println("=====================================");
+    
+    test_large_numbers();
+    
+    println("--- Deep Recursion Test ---");
+    println("Sum 1 to 100 =");
+    println(test_deep_recursion(100));
+    
+    println("Sum 1 to 1000 =");
+    println(test_deep_recursion(1000));
+    
+    return 0;
+}

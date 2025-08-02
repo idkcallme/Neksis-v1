@@ -1,0 +1,14 @@
+fn main() -> Int {
+    // Basic types
+    let number: Int = 42;
+    let text: String = "Hello";
+    let flag: Bool = true;
+    
+    // Print variables
+    print("Number: ");
+    println(number);
+    print("Text: ");
+    println(text);
+    
+    return 0;
+}

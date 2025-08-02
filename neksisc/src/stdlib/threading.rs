@@ -82,12 +82,11 @@ impl Drop for ThreadPool {
 }
 
 struct Worker {
-    id: usize,
     thread: Option<thread::JoinHandle<()>>,
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Arc<Mutex<Receiver<Message>>>) -> Worker {
+    fn new(_id: usize, receiver: Arc<Mutex<Receiver<Message>>>) -> Worker {
         let thread = thread::spawn(move || loop {
             let message = receiver.lock().unwrap().recv();
             match message {
@@ -104,7 +103,6 @@ impl Worker {
         });
 
         Worker {
-            id,
             thread: Some(thread),
         }
     }
@@ -112,6 +110,7 @@ impl Worker {
 
 enum Message {
     NewJob(Box<dyn FnOnce() + Send + 'static>),
+    #[allow(dead_code)]
     Terminate,
 }
 
@@ -364,6 +363,7 @@ impl Clone for AtomicCounter {
 // Async task scheduler (simplified)
 pub struct AsyncScheduler {
     tasks: Arc<Mutex<VecDeque<Box<dyn FnOnce() + Send + 'static>>>>,
+    #[allow(dead_code)]
     workers: Vec<Worker>,
 }
 
@@ -376,7 +376,7 @@ impl AsyncScheduler {
         let tasks = Arc::new(Mutex::new(VecDeque::<Box<dyn FnOnce() + Send + 'static>>::new()));
         let mut workers = Vec::with_capacity(worker_count);
 
-        for id in 0..worker_count {
+        for _id in 0..worker_count {
             let tasks_clone = Arc::clone(&tasks);
             let worker = thread::spawn(move || {
                 loop {
@@ -394,7 +394,6 @@ impl AsyncScheduler {
             });
             
             workers.push(Worker {
-                id,
                 thread: Some(worker),
             });
         }

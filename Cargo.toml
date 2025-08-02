@@ -23,4 +23,12 @@ tower-lsp = "0.20"
 
 [[bin]]
 name = "neksis"
-path = "src/main.rs" 
+path = "src/main.rs"
+
+[[bin]]
+name = "comprehensive_test"
+path = "src/comprehensive_test_runner.rs"
+
+[[bin]]
+name = "simple_parser_test"
+path = "src/simple_parser_test.rs" 

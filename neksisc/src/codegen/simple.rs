@@ -1,11 +1,8 @@
+#[allow(dead_code)]
 use crate::ast::{
-    Expression, Literal, BinaryOperator, UnaryOperator,
-    IfExpression, WhileExpression, LoopExpression, BoxExpression,
+    Expression, BoxExpression,
     RcExpression, ArcExpression, CellExpression, RefCellExpression,
-    MallocExpression, FreeExpression, ReallocExpression,
-    MatchExpression, SpawnExpression, JoinExpression, ChannelExpression,
-    TryExpression, PipelineExpression, LifetimeExpression, StructLiteralExpression,
-    MemberAccessExpression, LetStatement, AssignmentStatement, ReturnStatement,
+    MallocExpression, FreeExpression, ReallocExpression, LetStatement, AssignmentStatement, ReturnStatement,
     FunctionStatement, Statement, Program, CallArgument, Pattern
 };
 use crate::error::CompilerError;
@@ -28,17 +25,15 @@ pub struct SimpleCodeGen {
     temp_counter: u32,
     label_counter: u32,
     stdlib: StandardLibrary,
-    options: CompilerOptions,
 }
 
 impl SimpleCodeGen {
-    pub fn new(options: CompilerOptions) -> Result<Self, CompilerError> {
+    pub fn new(_options: CompilerOptions) -> Result<Self, CompilerError> {
         Ok(Self {
             variables: HashMap::new(),
             temp_counter: 0,
             label_counter: 0,
             stdlib: StandardLibrary::new(),
-            options,
         })
     }
 
@@ -558,6 +553,7 @@ impl SimpleCodeGen {
         Ok(result_temp)
     }
 
+    // If expression generator - used in generate_expression
     fn generate_if_expression(&mut self, if_expr: &crate::ast::IfExpression) -> Result<String, CompilerError> {
         let condition = self.generate_expression(&if_expr.condition)?;
         let else_label = self.next_label();
@@ -596,6 +592,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
 
+    // While expression generator - used in generate_expression
     fn generate_while_expression(&mut self, while_expr: &crate::ast::WhileExpression) -> Result<String, CompilerError> {
         let condition = self.generate_expression(&while_expr.condition)?;
         let loop_label = self.next_label();
@@ -623,6 +620,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
 
+    // Loop expression generator - used in generate_expression
     fn generate_loop_expression(&mut self, loop_expr: &crate::ast::LoopExpression) -> Result<String, CompilerError> {
         let loop_label = self.next_label();
         let end_label = self.next_label();
@@ -665,6 +663,8 @@ impl SimpleCodeGen {
         Ok(temp)
     }
 
+    // Move expression generator - currently unused but kept for future use
+    #[allow(dead_code)]
     fn generate_move_expression(&mut self, expr: &Expression) -> Result<String, CompilerError> {
         // For now, just generate the expression (move semantics need more complex handling)
         self.generate_expression(expr)
@@ -675,6 +675,8 @@ impl SimpleCodeGen {
         self.generate_expression(expr)
     }
 
+    // Drop expression generator - currently unused but kept for future use
+    #[allow(dead_code)]
     fn generate_drop_expression(&mut self, expr: &Expression) -> Result<String, CompilerError> {
         // For now, just generate the expression (drop semantics need more complex handling)
         self.generate_expression(expr)
@@ -685,11 +687,14 @@ impl SimpleCodeGen {
         self.generate_expression(expr)
     }
 
+    // Reference generator - currently unused but kept for future use
+    #[allow(dead_code)]
     fn generate_reference(&mut self, name: &str, _borrow_type: &crate::ast::BorrowType) -> Result<String, CompilerError> {
         // For now, just return the variable (reference semantics need more complex handling)
         self.generate_identifier(name)
     }
 
+    // Struct literal generator - used in generate_expression
     fn generate_struct_literal(&mut self, struct_literal: &crate::ast::StructLiteralExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -704,6 +709,7 @@ impl SimpleCodeGen {
         Ok(temp) // Return the address of the allocated struct
     }
 
+    // Member access generator - used in generate_expression
     fn generate_member_access(&mut self, member_access: &crate::ast::MemberAccessExpression) -> Result<String, CompilerError> {
         let object_value = self.generate_expression(&member_access.object)?;
         let temp = self.next_temp();
@@ -716,6 +722,8 @@ impl SimpleCodeGen {
         Ok(temp)
     }
 
+    // Enum variant access generator - currently unused but kept for future use
+    #[allow(dead_code)]
     fn generate_enum_variant_access(&mut self, enum_name: &str, variant_name: &str) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         
@@ -727,6 +735,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
 
+    // Match expression generator - used in generate_expression
     fn generate_match_expression(&mut self, match_expr: &crate::ast::MatchExpression) -> Result<String, CompilerError> {
         let value = self.generate_expression(&match_expr.expression)?;
         let temp = self.next_temp();
@@ -815,6 +824,8 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Generic type call generator - currently unused but kept for future use
+    #[allow(dead_code)]
     fn generate_generic_type_call(&mut self, _generic_call: &crate::ast::Expression) -> Result<String, CompilerError> {
         // TODO: Implement generic type call generation
         let temp = self.next_temp();
@@ -1099,6 +1110,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Spawn expression generator - used in generate_expression
     fn generate_spawn_expression(&mut self, spawn_expr: &crate::ast::SpawnExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -1108,6 +1120,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Join expression generator - used in generate_expression
     fn generate_join_expression(&mut self, join_expr: &crate::ast::JoinExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -1117,6 +1130,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Channel expression generator - used in generate_expression
     fn generate_channel_expression(&mut self, channel_expr: &crate::ast::ChannelExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -1128,6 +1142,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Try expression generator - used in generate_expression
     fn generate_try_expression(&mut self, try_expr: &crate::ast::TryExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -1137,6 +1152,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Pipeline expression generator - used in generate_expression
     fn generate_pipeline_expression(&mut self, pipeline_expr: &crate::ast::PipelineExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {
@@ -1148,6 +1164,7 @@ impl SimpleCodeGen {
         Ok(temp)
     }
     
+    // Lifetime expression generator - used in generate_expression
     fn generate_lifetime_expression(&mut self, lifetime_expr: &crate::ast::LifetimeExpression) -> Result<String, CompilerError> {
         let temp = self.next_temp();
         if should_emit_asm() {

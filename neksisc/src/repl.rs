@@ -153,6 +153,11 @@ impl REPL {
             if self.history.len() > self.config.max_history {
                 self.history.remove(0);
             }
+            
+            // Auto-save history if enabled
+            if self.config.auto_save_history {
+                let _ = self.save_history();
+            }
 
             // Handle special commands
             if input.starts_with(':') {
@@ -219,6 +224,22 @@ impl REPL {
             Some(&":list") => {
                 self.list_watched_files()
             }
+            Some(&":load") => {
+                if let Some(file) = parts.get(1) {
+                    self.load_file(file)
+                } else {
+                    println!("Usage: :load <filename>");
+                    Ok(())
+                }
+            }
+            Some(&":save") => {
+                if let Some(file) = parts.get(1) {
+                    self.save_session(file)
+                } else {
+                    println!("Usage: :save <filename>");
+                    Ok(())
+                }
+            }
             Some(&":hot") => {
                 self.hot_reload_enabled = !self.hot_reload_enabled;
                 println!("Hot reloading: {}", if self.hot_reload_enabled { "ON" } else { "OFF" });
@@ -244,6 +265,8 @@ impl REPL {
         println!("  :debug         - Toggle debug mode");
         println!("  :hot           - Toggle hot reloading");
         println!("  :reload <file> - Hot reload a file");
+        println!("  :load <file>   - Load and execute a file");
+        println!("  :save <file>   - Save current session to file");
         println!("  :watch <file>  - Start watching a file for changes");
         println!("  :unwatch <file> - Stop watching a file");
         println!("  :list          - List watched files");

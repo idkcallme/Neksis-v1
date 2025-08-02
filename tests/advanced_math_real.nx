@@ -1,0 +1,40 @@
+fn factorial(n: Int) -> Int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+fn gcd(a: Int, b: Int) -> Int {
+    if b == 0 {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+fn main() -> Int {
+    println("Testing advanced mathematics...");
+    
+    println("--- Factorial Test ---");
+    println("factorial(5) =");
+    println(factorial(5));
+    
+    println("factorial(7) =");
+    println(factorial(7));
+    
+    println("--- GCD Test ---");
+    println("gcd(48, 18) =");
+    println(gcd(48, 18));
+    
+    println("gcd(100, 25) =");
+    println(gcd(100, 25));
+    
+    println("--- Modulo Operations ---");
+    println("100 % 7 =");
+    println(100 % 7);
+    
+    println("123 % 13 =");
+    println(123 % 13);
+    
+    return 0;
+}

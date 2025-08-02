@@ -20,6 +20,18 @@ name = "basic_test_runner"
 path = "src/basic_test_runner.rs"
 
 [[bin]]
+name = "final_test"
+path = "src/final_test.rs"
+
+[[bin]]
+name = "nexus_demo"
+path = "src/nexus_demo.rs"
+
+[[bin]]
+name = "nexus_complete"
+path = "src/nexus_demo_complete.rs"
+
+[[bin]]
 name = "test_runner"
 path = "src/test_runner.rs"
 
@@ -28,12 +40,32 @@ name = "simple_test_runner"
 path = "src/simple_test_runner.rs"
 
 [[bin]]
+name = "revolutionary_runner"
+path = "src/revolutionary_runner.rs"
+
+[[bin]]
+name = "revolutionary_demo"
+path = "src/revolutionary_demo.rs"
+
+[[bin]]
+name = "working_hello_test"
+path = "src/working_hello_test.rs"
+
+[[bin]]
+name = "simple_ultimate_test"
+path = "src/simple_ultimate_test.rs"
+
+[[bin]]
 name = "minimal_test_runner"
 path = "src/minimal_test_runner.rs"
 
 [[bin]]
 name = "comprehensive_test_runner"
 path = "src/comprehensive_test_runner.rs"
+
+[[bin]]
+name = "test_modern_parser"
+path = "src/bin/test_modern_parser.rs"
 
 [features]
 default = []
@@ -69,6 +101,8 @@ parking_lot = "0.12"
 anyhow = "1.0"
 chrono = { version = "0.4", features = ["serde", "clock"] }
 uuid = { version = "1.0", features = ["v4"] }
+futures-util = "0.3"
+lazy_static = "1.4"
 
 # WASM support (optional)
 wasmtime = { version = "1.0", optional = true }

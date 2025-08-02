@@ -1,0 +1,10 @@
+println("Step-by-step dict test");
+
+let dict = dict_new();
+println("Created: " + dict);
+
+dict = dict_set(dict, "test", "value");
+println("After set: " + dict);
+
+let retrieved = dict_get(dict, "test");
+println("Retrieved: " + retrieved);

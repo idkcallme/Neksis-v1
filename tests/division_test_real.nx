@@ -1,0 +1,20 @@
+fn test_division() -> Int {
+    println("Testing division edge cases...");
+    
+    println("10 / 3 =");
+    println(10 / 3);
+    
+    println("7 / 2 =");
+    println(7 / 2);
+    
+    println("Testing division by zero (this might fail):");
+    println("5 / 0 =");
+    println(5 / 0);
+    
+    return 0;
+}
+
+fn main() -> Int {
+    test_division();
+    return 0;
+}

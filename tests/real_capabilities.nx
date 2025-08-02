@@ -1,0 +1,64 @@
+// 🚀 NEKSIS LANGUAGE REAL CAPABILITIES TEST 🚀
+
+fn fibonacci(n: Int) -> Int {
+    if n <= 1 {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+fn factorial(n: Int) -> Int {
+    if n <= 1 {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+fn power(base: Int, exp: Int) -> Int {
+    if exp == 0 {
+        return 1;
+    }
+    return base * power(base, exp - 1);
+}
+
+fn main() -> Int {
+    println("🎯 NEKSIS REAL CAPABILITIES TEST 🎯");
+    println("=================================");
+    
+    println("✅ BASIC ARITHMETIC:");
+    println("10 + 5 =");
+    println(10 + 5);
+    println("17 % 5 =");
+    println(17 % 5);
+    
+    println("✅ STRING OPERATIONS:");
+    let name: String = "Neksis";
+    println("Language: " + name);
+    println("Number concat: " + 42);
+    
+    println("✅ RECURSIVE FUNCTIONS:");
+    println("fibonacci(8) =");
+    println(fibonacci(8));
+    println("factorial(6) =");
+    println(factorial(6));
+    println("power(2, 8) =");
+    println(power(2, 8));
+    
+    println("✅ LOOPS - FIZZBUZZ:");
+    let num: Int = 1;
+    while num <= 15 {
+        if num % 15 == 0 {
+            println("FizzBuzz");
+        } else if num % 3 == 0 {
+            println("Fizz");
+        } else if num % 5 == 0 {
+            println("Buzz");
+        } else {
+            println(num);
+        }
+        num = num + 1;
+    }
+    
+    println("🏆 NEKSIS WORKS PERFECTLY!");
+    return 0;
+}

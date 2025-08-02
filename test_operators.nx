@@ -1,0 +1,29 @@
+// Testing which operators actually work
+fn main() -> Int {
+    let a: Int = 5;
+    let b: Int = 10;
+    
+    println("Testing operators:");
+    
+    // Test >= operator
+    if a >= 5 {
+        println("Greater than or equal works");
+    }
+    
+    // Test <= operator  
+    if b <= 10 {
+        println("Less than or equal works");
+    }
+    
+    // Test > operator
+    if b > a {
+        println("Greater than works");
+    }
+    
+    // Test < operator
+    if a < b {
+        println("Less than works");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,40 @@
+println("=== Testing Dictionary Functions ===");
+
+let dict = dict_new();
+println("1. Created dict: " + typeof(dict));
+
+dict = dict_set(dict, "name", "Neksis");
+println("2. Set name in dict");
+
+let name = dict_get(dict, "name");
+println("3. Got name: " + name);
+
+let has_name = dict_has(dict, "name");
+println("4. Has name: " + has_name);
+
+let size = dict_size(dict);
+println("5. Dict size: " + size);
+
+println("=== Testing Array Functions ===");
+
+let arr = [1, 2, 3];
+println("6. Original array: " + typeof(arr));
+
+arr = array_push(arr, 4);
+println("7. After push: " + typeof(arr));
+
+let popped = array_pop(arr);
+println("8. Popped: " + typeof(popped));
+
+arr = array_reverse([1, 2, 3]);
+println("9. Reversed: " + typeof(arr));
+
+arr = array_sort([3, 1, 2]);
+println("10. Sorted: " + typeof(arr));
+
+println("=== Testing JSON ===");
+
+let json_str = json_stringify(dict);
+println("11. JSON string: " + typeof(json_str));
+
+println("All tests completed!");

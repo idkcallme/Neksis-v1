@@ -7,8 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("========================================");
     
     // Read the basic test file
-    let test_content = fs::read_to_string("../basic_tests.nx")
-        .expect("Failed to read basic_tests.nx");
+    let test_content = fs::read_to_string("../examples/hello_world.nx")
+        .expect("Failed to read hello_world.nx");
     
     println!("Test file loaded successfully!");
     println!("File size: {} bytes", test_content.len());

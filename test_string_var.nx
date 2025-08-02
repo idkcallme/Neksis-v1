@@ -1,0 +1,6 @@
+// Testing what causes compilation errors
+fn main() -> Int {
+    let text: String = "Hello World";
+    println(text);
+    return 0;
+}

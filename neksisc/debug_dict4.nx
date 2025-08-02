@@ -1,0 +1,8 @@
+println("Testing simple dict operations");
+
+let dict = dict_new();
+println(dict);
+
+let result = dict_set(dict, "key", "value");
+println("Result of dict_set:");
+println(result);

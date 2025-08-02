@@ -5,7 +5,7 @@ use crate::ast::{
     RcExpression, ArcExpression, CellExpression, RefCellExpression, MallocExpression,
     FreeExpression, ReallocExpression, LifetimeExpression, MatchExpression, SpawnExpression,
     JoinExpression, ChannelExpression, TryExpression, TryCatchExpression, PipelineExpression,
-    ClassStatement, InterpolatedPart, CallArgument, UnaryOperator
+    ClassStatement, InterpolatedPart, CallArgument, UnaryOperator, BinaryOperator, BinaryOp
 };
 use crate::error::CompilerError;
 use std::collections::HashMap;
@@ -101,7 +101,6 @@ pub struct SemanticAnalyzer {
     enums: HashMap<String, Vec<String>>,   // enum name -> variant names
     modules: HashMap<String, HashMap<String, TypeValue>>, // module name -> (function name -> type)
     current_function: Option<String>,
-    lifetimes: HashMap<String, usize>, // lifetime name -> scope depth
     ownership_info: HashMap<String, OwnershipInfo>,
     pub gradual_ownership: bool, // New field for gradual ownership mode
 }
@@ -124,7 +123,6 @@ impl SemanticAnalyzer {
             enums: HashMap::new(),
             modules: HashMap::new(),
             current_function: None,
-            lifetimes: HashMap::new(),
             ownership_info: HashMap::new(),
             gradual_ownership: true, // Gradual mode enabled by default
         }
@@ -249,6 +247,7 @@ impl SemanticAnalyzer {
             }
             Statement::Move(move_stmt) => self.analyze_move_statement(move_stmt),
             Statement::Drop(drop_stmt) => self.analyze_drop_statement(drop_stmt),
+            Statement::Function(func_stmt) => self.analyze_function_body(func_stmt),
             _ => Ok(()), // TODO: Implement other statement types
         }
     }
@@ -348,7 +347,14 @@ impl SemanticAnalyzer {
         match expression {
             Expression::Literal(literal) => Ok(TypeValue::from_literal(literal)),
             Expression::Identifier(name) => {
-                if name == "print" || name == "println" || name == "read_line" {
+                if name == "print" || name == "println" || name == "read_line" || 
+                   name == "read_file" || name == "write_file" || name == "append_file" || name == "file_exists" ||
+                   name == "abs" || name == "sqrt" || name == "sin" || name == "cos" || name == "tan" ||
+                   name == "floor" || name == "ceil" || name == "round" || name == "pow" || name == "min" || name == "max" ||
+                   name == "len" || name == "substring" || name == "concat" || name == "contains" || 
+                   name == "starts_with" || name == "ends_with" || name == "to_upper" || name == "to_lower" ||
+                   name == "trim" || name == "split" || name == "join" ||
+                   name == "random" || name == "random_int" || name == "typeof" || name == "time" || name == "sleep" || name == "exit" {
                     // Treat as built-in function: type is Function(Any, Any)
                     Ok(TypeValue::Function(vec![TypeValue::Unknown], Box::new(TypeValue::Unknown)))
                 } else if let Some(var_type) = self.variables.get(name) {
@@ -366,16 +372,43 @@ impl SemanticAnalyzer {
                 let left_type = self.analyze_expression(&bin_op.left)?;
                 let right_type = self.analyze_expression(&bin_op.right)?;
                 
-                // Check type compatibility for binary operations
-                match (&left_type, &right_type) {
-                    (TypeValue::Int, TypeValue::Int) => Ok(TypeValue::Int),
-                    (TypeValue::Float, TypeValue::Float) => Ok(TypeValue::Float),
-                    (TypeValue::Int, TypeValue::Float) => Ok(TypeValue::Float),
-                    (TypeValue::Float, TypeValue::Int) => Ok(TypeValue::Float),
-                    (TypeValue::Bool, TypeValue::Bool) => Ok(TypeValue::Bool),
-                    _ => self.ownership_error_or_warning(&format!("Invalid binary operation between {:?} and {:?}", left_type, right_type)),
+                // Handle comparison operators that return Bool
+                match bin_op.operator {
+                    BinaryOperator::GreaterThan | BinaryOperator::GreaterThanOrEqual |
+                    BinaryOperator::LessThan | BinaryOperator::LessThanOrEqual |
+                    BinaryOperator::Equal | BinaryOperator::NotEqual => {
+                        // Comparison operators return Bool
+                        if left_type == right_type || 
+                           (left_type == TypeValue::Int && right_type == TypeValue::Float) ||
+                           (left_type == TypeValue::Float && right_type == TypeValue::Int) {
+                            Ok(TypeValue::Bool)
+                        } else {
+                            self.ownership_error_or_warning(&format!("Cannot compare incompatible types: {:?} and {:?}", left_type, right_type))
+                        }
+                    }
+                    BinaryOperator::Add | BinaryOperator::Sub | BinaryOperator::Mul | BinaryOperator::Div => {
+                        // Arithmetic operators
+                        match (&left_type, &right_type) {
+                            (TypeValue::Int, TypeValue::Int) => Ok(TypeValue::Int),
+                            (TypeValue::Float, TypeValue::Float) => Ok(TypeValue::Float),
+                            (TypeValue::Int, TypeValue::Float) => Ok(TypeValue::Float),
+                            (TypeValue::Float, TypeValue::Int) => Ok(TypeValue::Float),
+                            (TypeValue::String, _) | (_, TypeValue::String) => Ok(TypeValue::String),
+                            _ => self.ownership_error_or_warning(&format!("Invalid arithmetic operation between {:?} and {:?}", left_type, right_type)),
+                        }
+                    }
+                    BinaryOperator::And | BinaryOperator::Or => {
+                        // Logical operators
+                        if left_type == TypeValue::Bool && right_type == TypeValue::Bool {
+                            Ok(TypeValue::Bool)
+                        } else {
+                            self.ownership_error_or_warning("Logical operators require boolean operands")
+                        }
+                    }
+                    _ => self.ownership_error_or_warning(&format!("Unsupported binary operator: {:?}", bin_op.operator)),
                 }
             }
+
             Expression::UnaryOp(unary_op) => {
                 let operand_type = self.analyze_expression(&unary_op.operand)?;
                 
@@ -446,19 +479,15 @@ impl SemanticAnalyzer {
                 self.analyze_expression(&loop_expr.body)?;
                 Ok(TypeValue::Void)
             }
-            Expression::BinaryExpression { left, operator: _, right } => {
-                let left_type = self.analyze_expression(left)?;
-                let right_type = self.analyze_expression(right)?;
-                
-                // Check type compatibility for binary operations
-                match (&left_type, &right_type) {
-                    (TypeValue::Int, TypeValue::Int) => Ok(TypeValue::Int),
-                    (TypeValue::Float, TypeValue::Float) => Ok(TypeValue::Float),
-                    (TypeValue::Int, TypeValue::Float) => Ok(TypeValue::Float),
-                    (TypeValue::Float, TypeValue::Int) => Ok(TypeValue::Float),
-                    (TypeValue::Bool, TypeValue::Bool) => Ok(TypeValue::Bool),
-                    _ => self.ownership_error_or_warning(&format!("Invalid binary operation between {:?} and {:?}", left_type, right_type)),
-                }
+
+            Expression::BinaryExpression { left, operator, right } => {
+                // Delegate to BinaryOp handling by creating a temporary BinaryOp
+                let bin_op = BinaryOp {
+                    left: left.clone(),
+                    operator: operator.clone(),
+                    right: right.clone(),
+                };
+                self.analyze_expression(&Expression::BinaryOp(bin_op))
             }
             Expression::UnaryExpression { operator: _, operand } => {
                 let operand_type = self.analyze_expression(operand)?;
@@ -1021,7 +1050,7 @@ impl SemanticAnalyzer {
 
     fn ownership_error_or_warning(&self, msg: &str) -> Result<TypeValue, CompilerError> {
         if self.gradual_ownership {
-            println!("[Warning] Ownership: {}", msg);
+            // println!("[Warning] Ownership: {}", msg);
             Ok(TypeValue::Unknown)
         } else {
             Err(CompilerError::type_error(msg))

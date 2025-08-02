@@ -13,12 +13,11 @@ pub trait CodeGenerator {
 }
 
 pub struct SimpleCodeGenerator {
-    options: CompilerOptions,
 }
 
 impl SimpleCodeGenerator {
-    pub fn new(options: CompilerOptions) -> Result<Self, CompilerError> {
-        Ok(Self { options })
+    pub fn new(_options: CompilerOptions) -> Result<Self, CompilerError> {
+        Ok(Self {})
     }
 }
 

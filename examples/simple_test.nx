@@ -1,7 +1,0 @@
-let x = 42;
-println("x = " + x);
-{
-    let y = 100;
-    println("y = " + y);
-}
-println("done"); 

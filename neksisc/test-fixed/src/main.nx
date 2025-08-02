@@ -1,0 +1,28 @@
+// Test while loops
+let i = 0;
+while (i < 5) {
+    println(i);
+    i = i + 1;
+}
+
+// Test function with parameters
+fn add(a, b) {
+    return a + b;
+}
+
+let result = add(5, 3);
+println("add(5, 3) = " + result);
+
+// Test array literals and access
+let arr = [1, 2, 3, 4, 5];
+println("Array element at index 0: " + arr[0]);
+println("Array element at index 2: " + arr[2]);
+
+// Test while loop with arrays
+let j = 0;
+while (j < 3) {
+    println("arr[" + j + "] = " + arr[j]);
+    j = j + 1;
+}
+
+println("All tests completed!");

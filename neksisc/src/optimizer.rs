@@ -1,4 +1,4 @@
-use crate::ast::{Program, Statement, Expression, FunctionStatement, BinaryOp, UnaryOp};
+use crate::ast::{Program, Statement, Expression, FunctionStatement, BinaryOp};
 use crate::error::CompilerError;
 use crate::compiler::CompilerOptions;
 use std::collections::HashSet;
@@ -34,6 +34,7 @@ impl OptimizationLevel {
 #[derive(Clone)]
 pub struct Optimizer {
     passes: Vec<OptimizationPass>,
+    #[allow(dead_code)]
     options: CompilerOptions,
     optimization_stats: OptimizationStats,
 }

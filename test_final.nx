@@ -1,0 +1,53 @@
+fn calculate_grade(score: Int) -> String {
+    if score >= 90 {
+        return "A";
+    } else if score >= 80 {
+        return "B";
+    } else if score >= 70 {
+        return "C";
+    } else if score >= 60 {
+        return "D";
+    } else {
+        return "F";
+    }
+}
+
+fn grade_system() -> Int {
+    println("=== Grade Calculator ===");
+    
+    let math_score: Int = 85;
+    let science_score: Int = 92;
+    let english_score: Int = 78;
+    
+    print("Math score: ");
+    println(math_score);
+    print("Science score: ");
+    println(science_score);
+    print("English score: ");
+    println(english_score);
+    println("");
+    
+    let math_grade: String = calculate_grade(math_score);
+    let science_grade: String = calculate_grade(science_score);
+    let english_grade: String = calculate_grade(english_score);
+    
+    println("Grade Report:");
+    println("Math: " + math_grade);
+    println("Science: " + science_grade);
+    println("English: " + english_grade);
+    
+    let total: Int = math_score + science_score + english_score;
+    let average: Int = total / 3;
+    let overall_grade: String = calculate_grade(average);
+    
+    print("Average: ");
+    println(average);
+    println("Overall Grade: " + overall_grade);
+    
+    return average;
+}
+
+fn main() -> Int {
+    grade_system();
+    return 0;
+}
