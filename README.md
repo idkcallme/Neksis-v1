@@ -39,31 +39,6 @@ cargo build --release
 3. **Learn the language:**
    Read the [Complete Neksis Tutorial](COMPLETE_NEKSIS_TUTORIAL.md) for comprehensive documentation with real examples.
 
-## What Works
-
-✅ **Core Language Features:**
-- Variables (`Int`, `String` types)
-- Arithmetic operations (`+`, `-`, `*`, `/`)
-- Comparison operators (`>`, `<`, `>=`, `<=`)
-- Control flow (`if`/`else`, `while` loops)
-- Functions (parameters, return values)
-- String concatenation
-
-✅ **Real Examples:**
-- Calculator programs
-- Temperature converters  
-- Grade calculators
-- Loan calculators
-- Text processing
-
-## Current Limitations
-
-- No arrays/lists yet
-- No for loops (while loops only)
-- No complex data structures
-- Single file programs only
-- No file I/O yet
-
 ## Repository Structure
 
 - `src/` - Compiler source code
